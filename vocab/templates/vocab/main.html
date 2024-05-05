@@ -1,13 +1,35 @@
 {% extends 'vocab/base.html' %}
+{% load static %}
 
 {% block title %}
 Kindle Vocab
 {% endblock %}
 
 {% block content %}
-Main page
+
+
+<div class="container text-center">
+  <div class="row">
+    <div class="col-4">
+    </div>
+    <div class="col-4">
+        <h1 class="text-center">Drag your vocab here:</h1>
+        <form action="#" class="dropzone" id="dropzone-main" method="post">
+            {% csrf_token %}
+        </form>
+        <div id="example_image_container">
+            <img id="example_image" src="{% static 'vocab/images/sqlite.png' %}" draggable="true">
+            <p><em>drag example</em></p>
+        </div>
+    </div>
+    <div class="col-4">
+    </div>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block js %}
 <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+<script src="{% static 'vocab/js/dropbox-main.js' %}"></script>
 {% endblock %}
