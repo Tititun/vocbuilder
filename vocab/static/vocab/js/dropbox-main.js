@@ -1,26 +1,47 @@
-Dropzone.options.dropzoneMain = {
-    paramName: "file",
-    maxFilesize: 100,
-    maxFiles: 1,
-    accept: function(file, done) {
-     if (file.name == "justinbieber.jpg") {
-        done("Naha, you don't.");
-     }
-     else {
-        done();
-     }
-   }
- };
-
 const drag_example = document.querySelector('#example_image');
 const drag_target = document.querySelector('#dropzone-main');
 
+Dropzone.options.dropzoneMain = {
+    paramName: "file",
+    maxFilesize: 200,
+    maxFiles: 1,
+    acceptedFiles: '.db',
+    addRemoveLinks: true,
+    autoProcessQueue: false,
+    hiddenInputContainer: document.querySelector('#dropzone-main'),
+    accept: function(file, done) {
+        document.querySelector('[type="file"]').name = 'db'
+        drag_target.requestSubmit();
+        done();
+   }
+ };
+
 drag_example.addEventListener('dragend', e => {
-    console.log('end');
     let b = drag_target.getBoundingClientRect(); // boundaries
     if (e.x >= b.left && e.x <= b.right && e.y >= b.top && e.y <= b.bottom) {
-        console.log('inside')
+        drag_target.requestSubmit();
     }
 });
+
+//function send_db(db, example=false) {
+//    const csrftoken = Cookies.get('csrftoken');
+//    console.log(csrftoken)
+//    const url = post_main_url;
+//    var options = {
+//        method: 'POST',
+//        headers: {'X-CSRFToken': csrftoken},
+//        mode: 'same-origin'
+//    }
+//    let formData = new FormData();
+//    formData.append('db', example ? 'example' : db);
+//    options['body'] = formData;
+//
+//    fetch(url, options)
+//    .then(response => response.json())
+//    .then(data => {
+//        console.log(data)
+//    })
+//
+//}
 
 

@@ -14,7 +14,7 @@ Kindle Vocab
     </div>
     <div class="col-4">
         <h1 class="text-center">Drag your vocab here:</h1>
-        <form action="#" class="dropzone" id="dropzone-main" method="post">
+        <form action="{% url 'vocab:index' %}" class="dropzone" id="dropzone-main" method="post" enctype="multipart/form-data">
             {% csrf_token %}
         </form>
         <div id="example_image_container">
@@ -31,5 +31,9 @@ Kindle Vocab
 
 {% block js %}
 <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+<script>
+    var post_main_url = '{% url "vocab:index" %}'
+</script>
 <script src="{% static 'vocab/js/dropbox-main.js' %}"></script>
 {% endblock %}
