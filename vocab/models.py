@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import UniqueConstraint
 
 
 class Authors(models.Model):
@@ -28,11 +29,18 @@ class Usage(models.Model):
 
 class DictRecord(models.Model):
     dictionary = models.ForeignKey(Dictionary, on_delete=models.CASCADE)
+    word = models.ForeignKey(Word, on_delete=models.CASCADE)
     pronunciation = models.CharField(max_length=200, null=True)
     did_you_know_header = models.CharField(max_length=100, null=True)
     did_you_know = models.TextField(null=True)
     url = models.CharField(max_length=200, null=False, blank=False)
     created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(fields=['dictionary', 'word'],
+                             name='dict_word_unique')
+        ]
 
 
 class Definition(models.Model):

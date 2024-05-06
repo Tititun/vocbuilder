@@ -19,7 +19,7 @@ HEADERS = {
 my_dict = {}
 
 
-def parse_word(word: str) -> Optional[dict]:
+def scrape_webster(word: str) -> Optional[dict]:
     """Scrape the given word on https://www.merriam-webster.com"""
 
     link = 'https://www.merriam-webster.com/dictionary/' + word
@@ -176,4 +176,4 @@ def parse_word(word: str) -> Optional[dict]:
 
 
 if __name__ == '__main__':
-    parse_word('quixotical')
+    scrape_webster('quixotical')
