@@ -58,8 +58,8 @@ def scrape_webster(word: str) -> Optional[dict]:
         inflections = entry.select('.if')
         if inflections:
             inflections = [infl.text.strip() for infl in inflections]
-            entry_record['inflections'] = inflections
-            logger.info(f'inflections: {inflections}')
+        entry_record['inflections'] = inflections
+        logger.info(f'inflections: {inflections}')
 
         ssqs = entry.select('.vg')
         logger.info(f'found {len(dict_entries)} sense sequences')
@@ -171,7 +171,6 @@ def scrape_webster(word: str) -> Optional[dict]:
         'header': did_you_now_header,
         'text': text
     }
-    pprint(data)
     return data
 
 
