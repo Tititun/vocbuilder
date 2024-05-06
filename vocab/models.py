@@ -31,6 +31,7 @@ class DictRecord(models.Model):
     pronunciation = models.CharField(max_length=200, null=True)
     did_you_know_header = models.CharField(max_length=100, null=True)
     did_you_know = models.TextField(null=True)
+    url = models.CharField(max_length=200, null=False, blank=False)
     created = models.DateTimeField(auto_now_add=True)
 
 
@@ -40,8 +41,7 @@ class Definition(models.Model):
 
 
 class Inflection(models.Model):
-    definition = dict_record = models.ForeignKey(Definition,
-                                                 on_delete=models.CASCADE)
+    definition = models.ForeignKey(Definition, on_delete=models.CASCADE)
     inflection = models.CharField(max_length=200, null=False, blank=False)
 
 

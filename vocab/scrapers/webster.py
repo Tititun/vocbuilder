@@ -28,7 +28,7 @@ def parse_word(word: str) -> Optional[dict]:
     if not response.ok:
         logger.exception(f'Error in response for {word}')
         return
-    data = {'derived': []}
+    data = {'derived': [], 'url': link}
     soup = BeautifulSoup(response.text, 'html.parser')
 
     word = soup.select_one('.hword').text
