@@ -24,7 +24,8 @@ class Dictionary(models.Model):
 
 
 class Word(models.Model):
-    stem = models.CharField(max_length=200, null=False, blank=False)
+    stem = models.CharField(max_length=200, null=False, blank=False,
+                            unique=True)
 
 
 class Usage(models.Model):
