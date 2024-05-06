@@ -55,6 +55,11 @@ def parse_word(word: str) -> Optional[dict]:
                 part_of_speech = match.groups()[0].strip()
             entry_record['part_of_speech'] = part_of_speech
         logger.info(f'part of speech: {part_of_speech}')
+        inflections = entry.select('.if')
+        if inflections:
+            inflections = [infl.text.strip() for infl in inflections]
+            entry_record['inflections'] = inflections
+            logger.info(f'inflections: {inflections}')
 
         ssqs = entry.select('.vg')
         logger.info(f'found {len(dict_entries)} sense sequences')

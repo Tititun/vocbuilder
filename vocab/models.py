@@ -39,6 +39,12 @@ class Definition(models.Model):
     part_of_speech = models.CharField(max_length=100)
 
 
+class Inflection(models.Model):
+    definition = dict_record = models.ForeignKey(Definition,
+                                                 on_delete=models.CASCADE)
+    inflection = models.CharField(max_length=200, null=False, blank=False)
+
+
 class SenseSequence(models.Model):
     definition = models.ForeignKey(Definition, on_delete=models.CASCADE)
     role = models.CharField(max_length=200, null=True)
