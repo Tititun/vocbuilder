@@ -6,7 +6,7 @@ class Authors(models.Model):
     name = models.CharField(max_length=200, null=False, blank=False)
 
 
-class Books(models.Model):
+class Book(models.Model):
     title = models.CharField(max_length=200, null=False, blank=False)
     authors = models.ForeignKey(Authors, on_delete=models.CASCADE)
 
@@ -15,6 +15,12 @@ class Dictionary(models.Model):
     name = models.CharField(max_length=200, null=False, blank=False)
     language_from = models.CharField(max_length=2, null=False, blank=False)
     language_to = models.CharField(max_length=2, null=False, blank=False)
+
+    class Meta:
+        verbose_name_plural = "dictionaries"
+
+    def __str__(self):
+        return self.name
 
 
 class Word(models.Model):
@@ -25,6 +31,7 @@ class Usage(models.Model):
     word = models.ForeignKey(Word, on_delete=models.CASCADE)
     context_word = models.CharField(max_length=200, null=False, blank=False)
     usage = models.TextField(blank=False, null=False)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
 
 
 class DictRecord(models.Model):
@@ -61,9 +68,21 @@ class SenseSequence(models.Model):
 class Sense(models.Model):
     sense_sequence = models.ForeignKey(SenseSequence, on_delete=models.CASCADE)
     definition = models.TextField(null=False, blank=False)
-    example = models.CharField(max_length=200, null=True)
-    labels = models.CharField(max_length=200, null=True)
-    usage_notes = models.CharField(max_length=200, null=True)
+
+
+class SenseExample(models.Model):
+    text = models.TextField(null=False, blank=False)
+    sense = models.ForeignKey(Sense, on_delete=models.CASCADE)
+
+
+class SenseLabel(models.Model):
+    label = models.CharField(max_length=200, null=False, blank=False)
+    sense = models.ForeignKey(Sense, on_delete=models.CASCADE)
+
+
+class SenseUsageNote(models.Model):
+    usage_note = models.CharField(max_length=200, null=False, blank=False)
+    sense = models.ForeignKey(Sense, on_delete=models.CASCADE)
 
 
 class Etymology(models.Model):
