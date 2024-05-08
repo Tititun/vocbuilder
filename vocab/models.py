@@ -42,6 +42,7 @@ class DictRecord(models.Model):
     did_you_know_header = models.CharField(max_length=100, null=True)
     did_you_know = models.TextField(null=True)
     url = models.CharField(max_length=200, null=False, blank=False)
+    error_fetching = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -88,7 +89,7 @@ class SenseUsageNote(models.Model):
 
 class Etymology(models.Model):
     dict_record = models.ForeignKey(DictRecord, on_delete=models.CASCADE)
-    part_of_speech = models.CharField(max_length=100)
+    part_of_speech = models.CharField(max_length=100, null=True)
     etymology = models.TextField(null=False, blank=False)
 
 
