@@ -133,8 +133,8 @@ def scrape_webster(word: str) -> Optional[dict]:
                            ' .sub-content-thread')
     if examples:
         examples = [ex.text.strip() for ex in examples]
-        data['examples'] = examples
-        logger.info(f'examples: {examples}')
+    data['examples'] = examples
+    logger.info(f'examples: {examples}')
 
     etymologies = soup.select('#word-history .et')
     data['etymologies'] = []
