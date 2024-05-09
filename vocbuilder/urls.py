@@ -20,10 +20,16 @@ from django.conf.urls.static import static
 from django.urls import include, path
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.views.generic.base import RedirectView
+from django.views.decorators.csrf import csrf_exempt
+from graphene_django.views import GraphQLView
+from vocbuilder.schema import schema
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('favicon.ico', RedirectView.as_view(url=staticfiles_storage.url('vocab/images/favicon.svg'))),
+    # TODO: handle csrf in GraphQL more gracefully:
+    path("graphql", csrf_exempt(GraphQLView.as_view(graphiql=True,
+                                                    schema=schema))),
     # path("__debug__/", include("debug_toolbar.urls")),
     path('', include('vocab.urls'))
 ]
