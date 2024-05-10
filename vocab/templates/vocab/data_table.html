@@ -1,0 +1,42 @@
+{% extends 'vocab/base.html' %}
+{% load static %}
+
+{% block title %}
+Vocabulary Words
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid d-flex">
+    <div class="col-2">
+        <div class="d-flex align-items-center flex-column buttons_holder sticky-top">
+            <button id="word_sort" type="button" data-order="ascending" class="btn btn-light panel_button border bi bi-sort-alpha-down">Word sort</button>
+            <div class="d-flex flex-column align-items-start">
+                <h3>Books:</h3>
+                {% for book in books %}
+                <div class="form-check">
+                  <input class="form-check-input book_check" type="checkbox" value="{{ book }}" id="book_{{ forloop.counter }}" checked>
+                  <label class="form-check-label check_label" for="book_{{ forloop.counter }}">
+                      {{ book }}
+                  </label>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="col-10 container-fluid d-flex">
+        <div id="root"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<!--swap 'development' to 'production.min'-->
+<script src="{% static 'vocab/js/react.development.js' %}"></script>
+<script src="{% static 'vocab/js/react-dom.development.js' %}"></script>
+<script src="{% static 'vocab/js/babel.min.js' %}"></script>
+<script src="{% static 'vocab/js/vars.js' %}"></script>
+<script>
+    var initial_table_data = {{ data|safe }}
+</script>
+<script type="text/babel" src="{% static 'vocab/js/data_table.js' %}"></script>
+{% endblock %}

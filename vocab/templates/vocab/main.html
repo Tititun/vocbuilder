@@ -30,8 +30,8 @@ Kindle Vocab
 {% endblock %}
 
 {% block js %}
-<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
-<script src="//cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+<script src="{% static 'vocab/js/dropzone.min.js' %}"></script>
+<script src="{% static 'vocab/js/js.cookie.min.js' %}"></script>
 <script>
     var post_main_url = '{% url "vocab:index" %}'
 </script>
