@@ -10,3 +10,34 @@
 .dropzone {
     border-radius: 10px;
 }
+
+.word_card_container {
+    margin: 2em;
+}
+
+.word_card {
+    background-color: #FAF9F6;
+    margin: 1em;
+    padding: 1em;
+}
+
+.word_card_button {
+    margin: 0.5em;
+}
+
+.word_collapse {
+  display: none;
+}
+
+.panel_button:first-child {
+    margin-top: 5em;
+}
+
+.panel_button {
+    margin-bottom: 0.5em;
+    min-width: 100%;
+}
+
+.check_label {
+    min-width: 170px;
+}
