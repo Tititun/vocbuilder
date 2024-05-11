@@ -4,8 +4,6 @@ const db_data = initial_table_data;
 const orig_keys = Object.keys(db_data.words)
 
 
-
-
 const etiCollapse = function (e) {
     const button = e.target;
     const selector = e.target.dataset.target;
@@ -44,42 +42,149 @@ const exCollapse = function (e) {
     }
 }
 
+document.querySelector('#book_clear').addEventListener('click', (e) => {
+    document.querySelectorAll('.book_check').forEach(el => {
+        el.checked = false;
+    })
+    document.querySelector('.book_check').dispatchEvent(new Event('change'))
+})
+
+document.querySelector('#book_select').addEventListener('click', (e) => {
+    document.querySelectorAll('.book_check').forEach(el => {
+        el.checked = true;
+    })
+    document.querySelector('.book_check').dispatchEvent(new Event('change'))
+})
+
+
+function Card(rec_name, rec_data, rec_idx, book_names) {
+    const [cardData, setCardData] = React.useState(rec_data)
+    // const cardData = rec_data;
+    React.useEffect(() => {setCardData(rec_data)}, [rec_data])
+    let usages = [];
+    let definitions = [];
+    let eties = []; // etymologies
+    let examples = [];
+    cardData.usages.map((use_record, use_idx) => {
+        if (!(book_names.includes(use_record.book.title))) return
+        let context = use_record.context;
+        let usage = use_record.usage;
+        let index = usage.indexOf(context);
+        let usage_begin = usage.substring(0, index);
+        let usage_highlight = usage.substring(index, index + context.length);
+        let usage_end = usage.substring(index + context.length)
+        usages.push(
+            <li key={use_idx}>
+                {usage_begin}<strong>{usage_highlight}</strong>{usage_end} 
+                <em>(
+                    <span key={1} className="book_title">{use_record.book.title}</span>{', '}
+                    <span key={2} className="book_authors">{use_record.book.authors}</span>
+                    )
+                </em>
+            </li>
+        )
+    })
+    if (!usages.length) return
+    cardData.definitions.map((def_record, def_idx) => {
+        definitions.push(
+            <li key={def_idx}>
+                { def_record.sense_definition }
+            </li>
+        )
+    })
+    cardData.etymologies.map((eti_record, eti_idx) => {
+        eties.push(
+            <div key={eti_idx}>
+                <p key={1}>
+                    <strong>{ eti_record.part_of_sppech }</strong>
+                </p>
+                <p key={2}>
+                    { eti_record.etymology }
+                </p>
+            </div>
+        )
+    })
+    cardData.examples.map((ex_record, ex_idx) => {
+        examples.push(
+            <li key={ex_idx}>
+                { ex_record }
+            </li>
+        )
+    })
+    const word_counter = document.querySelector('#word_count');
+    word_counter.innerHTML = (parseInt(word_counter.innerHTML) || 0) + usages.length
+    return (
+        <div key={rec_idx} id={`cards_${rec_idx}`} className="word_card_container container d-flex">
+            <div key={1} className="word_card col-6 border rounded-2">
+                <h3 className = "text-center" key="name">{rec_name}</h3>
+                <em><p className = "text-center" key="pronunciation">{cardData['pron']}</p></em>
+                <ul key="usages">
+                    { usages }
+                </ul>
+            </div>
+            <div key={2} className="word_card col-6 border rounded-2">
+                <ul key={1}>
+                    { definitions }
+                </ul>
+                <div key={2} className="container d-flex">
+                    <div key={1}>
+                        <button onClick = {etiCollapse} className="btn btn-primary word_card_button" type="button" data-target={`#eti_${rec_idx}`} disabled={!eties.length} >
+                            Etymology
+                        </button>
+                    </div>
+                    <div key={2}>
+                        <button onClick = {exCollapse} className="btn btn-primary word_card_button" type="button" data-target={`#ex_${rec_idx}`} disabled={!examples.length}>
+                            Examples
+                        </button>
+                    </div>
+                </div>
+                <div key={3} className="container d-flex">
+                    {eties.length > 0 ?
+                    <div key={1} className="word_collapse" id={`eti_${rec_idx}`}>
+                        <div className="card card-body">
+                            {eties}
+                        </div>
+                    </div>
+                     : null}
+                    {examples.length > 0 ?
+                     <div key={2} className="word_collapse" id={`ex_${rec_idx}`}>
+                        <div className="card card-body">
+                            {examples}
+                        </div>
+                    </div>
+                     : null} 
+                </div> 
+            </div>
+        </div>)
+
+}
 
 
 function DataTable( {data, books, book_authors} ) {
 
-    console.log(data)
-    let new_data = {};
-    let keys = orig_keys;
-    const [wordSort, setWordSort] = React.useState(false);
-    const [ascending, setAscending] = React.useState(false);
+    const [keys, setKeys] = React.useState(Object.keys(data))
     const [book_names, setBooks] = React.useState(books);
     
     const wordSortCallback = (e) => {
         let button = e.target;
         let order = button.dataset.order;
-        console.log(order)
         if (button.classList.contains('btn-light')) {
-            console.log(1)
             button.classList.remove('btn-light');
             button.classList.add('btn-primary');
             button.innerHTML = ABC_asc + 'Word sort';
-            setWordSort(true);
-            setAscending(true);
+            let new_keys = keys.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
+            setKeys([...new_keys]);
         } else if (order === 'ascending') {
-            console.log(2)
             button.dataset.order = 'descending';
             button.innerHTML = ABC_desc + 'Word sort';
-            setWordSort(true);
-            setAscending(false);
+            let new_keys = keys.sort((a, b) => b.toLowerCase().localeCompare(a.toLowerCase()))
+            setKeys([...new_keys]);
         } else {
-            console.log(3)
             button.classList.remove('btn-primary');
             button.classList.add('btn-light');
             button.innerHTML = 'Word sort';
             button.dataset.order = 'ascending';
-            setWordSort(false);
-            setAscending(false);
+            setKeys([...orig_keys]);
         }
     }
 
@@ -99,120 +204,18 @@ function DataTable( {data, books, book_authors} ) {
         return () => {
             document.querySelector('#word_sort').removeEventListener('click', wordSortCallback)
             document.querySelectorAll('.book_check').forEach(el => el.removeEventListener('change', bookCheckCallback))
-}
+    }
     }, [])
 
-    if (wordSort) {
-        keys = orig_keys.sort((a, b) => {
-            if (ascending) {
-            return a.toLowerCase().localeCompare(b.toLowerCase())
-        } else {
-            return b.toLowerCase().localeCompare(a.toLowerCase())
-        }}  )
-        for (let k of keys) {new_data[k] = data[k]}
-    }
-    console.log(book_names)
+
+    document.querySelector('#word_count').innerHTML = 0;
     return (
     <div className="container">
         {
-            Object.entries(Object.keys(new_data).length ? new_data : data).map((rec, rec_idx) => {
-                const [rec_name, rec_data] = rec;
-                let usages = [];
-                let definitions = [];
-                let eties = []; // etymologies
-                let examples = [];
-                rec_data.usages.map((use_record, use_idx) => {
-                    console.log(use_record.book.title)
-                    console.log(book_names.includes(use_record.book.title))
-                    if (!(book_names.includes(use_record.book.title))) return
-                    let context = use_record.context;
-                    let usage = use_record.usage;
-                    let index = usage.indexOf(context);
-                    let usage_begin = usage.substring(0, index);
-                    let usage_highlight = usage.substring(index, index + context.length);
-                    let usage_end = usage.substring(index + context.length)
-                    usages.push(
-                        <li key={use_idx}>
-                            {usage_begin}<strong>{usage_highlight}</strong>{usage_end} 
-                            <em>(
-                                <span key={1} className="book_title">{use_record.book.title}</span>{', '}
-                                <span key={2} className="book_authors">{use_record.book.authors}</span>
-                                )
-                            </em>
-                        </li>
-                    )
-                })
-                if (!usages.length) return
-                rec_data.definitions.map((def_record, def_idx) => {
-                    definitions.push(
-                        <li key={def_idx}>
-                            { def_record.sense_definition }
-                        </li>
-                    )
-                })
-                rec_data.etymologies.map((eti_record, eti_idx) => {
-                    eties.push(
-                        <div key={eti_idx}>
-                            <p key={1}>
-                                <strong>{ eti_record.part_of_sppech }</strong>
-                            </p>
-                            <p key={2}>
-                                { eti_record.etymology }
-                            </p>
-                        </div>
-                    )
-                })
-                rec_data.examples.map((ex_record, ex_idx) => {
-                    examples.push(
-                        <li key={ex_idx}>
-                            { ex_record }
-                        </li>
-                    )
-                })
-                return (
-                <div key={rec_idx} className="word_card_container container d-flex">
-                    <div key={1} className="word_card col-6 border rounded-2">
-                        <h3 className = "text-center" key="name">{rec_name}</h3>
-                        <em><p className = "text-center" key="pronunciation">{rec_data['pron']}</p></em>
-                        <ul key="usages">
-                            { usages }
-                        </ul>
-                    </div>
-                    <div key={2} className="word_card col-6 border rounded-2">
-                        <ul key={1}>
-                            { definitions }
-                        </ul>
-                        <div key={2} className="container d-flex">
-                            <div key={1}>
-                                <button onClick = {etiCollapse} className="btn btn-primary word_card_button" type="button" data-target={`#eti_${rec_idx}`} disabled={!eties.length} >
-                                    Etymology
-                                </button>
-                            </div>
-                            <div key={2}>
-                                <button onClick = {exCollapse} className="btn btn-primary word_card_button" type="button" data-target={`#ex_${rec_idx}`} disabled={!examples.length}>
-                                    Examples
-                                </button>
-                            </div>
-                        </div>
-                        <div key={3} className="container d-flex">
-                            {eties.length > 0 ?
-                            <div key={1} className="word_collapse" id={`eti_${rec_idx}`}>
-                                <div className="card card-body">
-                                    {eties}
-                                </div>
-                            </div>
-                             : null}
-                            {examples.length > 0 ?
-                             <div key={2} className="word_collapse" id={`ex_${rec_idx}`}>
-                                <div className="card card-body">
-                                    {examples}
-                                </div>
-                            </div>
-                             : null} 
-                        </div> 
-                    </div>
-                </div>)
-            })
+            keys.map((rec_name, rec_idx) => {
+                const rec_data = data[rec_name];
+                return Card(rec_name, rec_data, rec_idx, book_names) }
+                )
         }
     </div>)
 }
