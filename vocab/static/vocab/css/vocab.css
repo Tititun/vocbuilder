@@ -30,7 +30,7 @@
 }
 
 .panel_button:first-child {
-    margin-top: 5em;
+    margin-top: 3.5em;
 }
 
 .panel_button {
@@ -39,5 +39,22 @@
 }
 
 .check_label {
-    min-width: 170px;
+    width: 100%;
+    margin-left: 10px;
+}
+
+#book_clear {
+  border: none;
+  background-color: white;
+  color: red;
+}
+
+#book_select {
+  border: none;
+  background-color: white;
+  color: green;
+}
+
+.form-check {
+    width: 100%
 }
