@@ -7,35 +7,68 @@ Vocabulary Words
 {% endblock %}
 
 {% block content %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid d-flex justify-content-center">
+      <ul class="navbar-nav">
+          <li class="nav-item">
+              <a class="nav-link" href="{% url 'vocab:index' %}">Main page</a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link" href="#">How it works</a>
+          </li>
+      </ul>
+      <form id="search" class="d-flex">
+          <input id="search_field" class="form-control me-2" type="search" placeholder="Search words">
+          <button class="btn btn-outline-secondary" type="submit">Search</button>
+    </form>
+  </div>
+</nav>
 <div class="container-fluid d-flex">
-    <div class="col-2">
-        <div class="d-flex align-items-center flex-column buttons_holder sticky-top">
-            <p>Total words: <span id="word_count"></span></p>
-            <button id="word_sort" type="button" data-order="ascending" class="btn btn-light panel_button border">Word sort</button>
-            <div class="d-flex flex-column align-items-start">
-                <h3>Books:
-                <button id="book_clear" type="button" class="btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16"> <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/> <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/></svg>
-                </button>
-                <button id="book_select" type="button" class="btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-check-all" viewBox="0 0 16 16"><path d="M8.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L2.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093L8.95 4.992zm-.92 5.14.92.92a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 1 0-1.091-1.028L9.477 9.417l-.485-.486z"/></svg>
-                </button>
-                </h3>
-                {% for book in books %}
-                <div class="form-check d-flex">
-                  <input class="form-check-input book_check" type="checkbox" value="{{ book }}" id="book_{{ forloop.counter }}" checked>
-                  <label class="form-check-label check_label" for="book_{{ forloop.counter }}">
-                      {{ book }}
-                  </label>
-                  <span>[{{ books_count|get_key:book }}]</span>
+    <div class="col-2 nav_column">
+        <div class="d-flex align-items-center flex-column buttons_holder">
+            <div class="container-fluid d-flex flex-column align-items-start nav_container">
+                <p class="align-self-center">Total words: <span id="word_count"></span></p>
+                <button id="word_sort" type="button" data-order="ascending" class="btn btn-light panel_button border">Word sort</button>
+                <div class="accordion accordion-flush">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="book_list_acc">
+                          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#book_list_acc_panel">
+                            Books
+                          </button>
+                        </h2>
+                        <div id="book_list_acc_panel" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
+                          <div class="accordion-body">
+                              <div id="book_container">
+                                  <button id="book_clear" type="button" class="btn button_icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16"> <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/> <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/></svg>
+                                    </button>
+                                    <button id="book_select" type="button" class="btn button_icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-check-all" viewBox="0 0 16 16"><path d="M8.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L2.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093L8.95 4.992zm-.92 5.14.92.92a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 1 0-1.091-1.028L9.477 9.417l-.485-.486z"/></svg>
+                                    </button>
+                                {% for book in books %}
+                                <div class="form-check d-flex">
+                                  <input class="form-check-input book_check" type="checkbox" value="{{ book }}" id="book_{{ forloop.counter }}" checked>
+                                  <label class="form-check-label check_label" for="book_{{ forloop.counter }}">
+                                      {{ book }}
+                                  </label>
+                                  <span>[{{ books_count|get_key:book }}]</span>
+                                </div>
+                                {% endfor %}
+                              </div>
+                          </div>
+                        </div>
+                    </div>
                 </div>
-                {% endfor %}
-            </div>
+                </div>
         </div>
     </div>
     <div class="col-10 container-fluid d-flex">
         <div id="root"></div>
     </div>
+    <button type="button" class="btn btn-secondary btn-floating btn-lg" id="btn-back-to-top">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16">  <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5"/></svg>
+        Back to top
+    </button>
 </div>
 {% endblock %}
 
@@ -45,8 +78,12 @@ Vocabulary Words
 <script src="{% static 'vocab/js/react-dom.development.js' %}"></script>
 <script src="{% static 'vocab/js/babel.min.js' %}"></script>
 <script src="{% static 'vocab/js/vars.js' %}"></script>
+<script src="{% static 'vocab/js/js.cookie.min.js' %}"></script>
+
 <script>
     var initial_table_data = {{ data|safe }}
+    var word_def_url = "{% url 'vocab:word_definition' %}"
+    var db_name = "{{ db_name }}"
 </script>
 <script type="text/babel" src="{% static 'vocab/js/data_table.js' %}"></script>
 {% endblock %}

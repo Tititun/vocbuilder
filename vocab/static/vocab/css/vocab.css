@@ -29,10 +29,6 @@
   display: none;
 }
 
-.panel_button:first-child {
-    margin-top: 3.5em;
-}
-
 .panel_button {
     margin-bottom: 0.5em;
     min-width: 100%;
@@ -57,4 +53,58 @@
 
 .form-check {
     width: 100%
+}
+
+#book_list {
+    min-width: 50%;
+    border-radius: 0;
+    margin-bottom: 0;
+}
+
+#book_container {
+    transition: transform 0.4s ease-in-out;
+}
+
+.slide-in {
+  transform: translateY(0%);
+}
+
+.button_icon {
+    padding-left: 8px;
+    padding-right: 1px;
+}
+
+.accordion-body {
+    padding-top: 1px;
+}
+
+.accordion {
+    min-width: 100%;
+}
+
+.nav_column {
+    overflow-y: scroll;
+}
+
+.nav_container:first-child {
+    margin-top: 3em;
+}
+
+#btn-back-to-top {
+  position: fixed;
+  bottom: 20px;
+  left: 50px;
+  display: none;
+}
+
+
+#search {
+    margin-left: 50px;
+}
+
+.hide {
+    display: none !important;
+}
+.spinner-border {
+
 }
