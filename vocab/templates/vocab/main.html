@@ -13,7 +13,7 @@ Kindle Vocab
     <div class="col-4">
     </div>
     <div class="col-4">
-        <h1 class="text-center">Drag your vocab here:</h1>
+        <h1 id="main_header" class="text-center">Drag your vocab here:</h1>
         <form action="{% url 'vocab:index' %}" class="dropzone" id="dropzone-main" method="post" enctype="multipart/form-data">
             {% csrf_token %}
         </form>

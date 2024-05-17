@@ -14,6 +14,26 @@
     </title>
 </head>
 <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid d-flex justify-content-center">
+          <ul class="navbar-nav">
+              {% if not is_main %}
+              <li class="nav-item">
+                  <a class="nav-link" href="{% url 'vocab:index' %}">Main page</a>
+              </li>
+              {% endif %}
+              <li class="nav-item">
+                  <a class="nav-link" href="#">How it works</a>
+              </li>
+          </ul>
+          {% if not is_main %}
+          <form id="search" class="d-flex">
+              <input id="search_field" class="form-control me-2" type="search" placeholder="Search words">
+              <button class="btn btn-outline-secondary" type="submit">Search</button>
+          </form>
+          {% endif %}
+      </div>
+    </nav>
     {% block content %}
     {% endblock %}
     <script src="{% static '/vocab/js/bootstrap.bundle.min.js' %}" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
