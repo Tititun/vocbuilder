@@ -1,10 +1,11 @@
 #example_image_container {
-    margin-top: 5em;
+    padding-top: 2em;
+    min-height: 100px;
+    min-width: 100px;
 }
 
-#example_image {
-    width: 60px;
-    height: 80px;
+#example_image:hover {
+    cursor: pointer;
 }
 
 .dropzone {
@@ -26,7 +27,14 @@
 }
 
 .word_collapse {
-  display: none;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 500ms ease-out;
+}
+
+.word_collapse.open {
+    max-height: 100%;
+    transition: max-height 500ms ease-out;
 }
 
 .panel_button {
@@ -119,6 +127,10 @@
     margin-bottom: 20px;
 }
 
+#tools {
+    padding-top: 5em;
+}
+
 #tools label {
     display: inline;
 }
@@ -132,5 +144,16 @@
 }
 
 .progress_counter:last-child {
-    margin-bottom: 100px;
+    margin-bottom: 50px;
+}
+
+#book_container .form-check-label {
+    cursor: pointer;
+}
+
+.anchor {
+  display: block;
+  height: 110px;
+  margin-top: -115px;
+  visibility: hidden;
 }
