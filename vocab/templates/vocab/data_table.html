@@ -7,29 +7,13 @@ Vocabulary Words
 {% endblock %}
 
 {% block content %}
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <div class="container-fluid d-flex justify-content-center">
-      <ul class="navbar-nav">
-          <li class="nav-item">
-              <a class="nav-link" href="{% url 'vocab:index' %}">Main page</a>
-          </li>
-          <li class="nav-item">
-              <a class="nav-link" href="#">How it works</a>
-          </li>
-      </ul>
-      <form id="search" class="d-flex">
-          <input id="search_field" class="form-control me-2" type="search" placeholder="Search words">
-          <button class="btn btn-outline-secondary" type="submit">Search</button>
-    </form>
-  </div>
-</nav>
 <div class="container-fluid d-flex">
-    <div class="col-2 nav_column">
+    <div class="col-2 pt-5 nav_column">
         <div class="d-flex align-items-center flex-column buttons_holder">
             <div class="container-fluid d-flex flex-column align-items-start nav_container">
                 <p class="align-self-center">Total words: <span id="word_count"></span></p>
                 <button id="word_sort" type="button" data-order="ascending" class="btn btn-light panel_button border">Word sort</button>
-                <div class="accordion accordion-flush">
+                <div class="accordion accordion-flush pb-5">
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="book_list_acc">
                           <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#book_list_acc_panel">
@@ -62,13 +46,64 @@ Vocabulary Words
                 </div>
         </div>
     </div>
-    <div class="col-10 container-fluid d-flex">
+    <div class="col-8 pt-5 container-fluid d-flex flex-column">
+        <div id="no_results" class="text-center"><h3>No words matching selected filters</h3></div>
         <div id="root"></div>
+    </div>
+    <div class="col-2 container-fluid flex-column d-flex">
+        <div id="tools" class="container-fluid flex-column d-flex sticky-top align-items-end vh-100">
+            <button type="button" class="p-1 btn btn-success btn-floating btn-lg" id="export_button" data-bs-toggle="modal" data-bs-target="#export_modal">
+                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>  <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/></svg>
+                Download
+            </button>
+            <div class="form-switch">
+              <input class="form-check-input" type="checkbox" role="switch" id="auto_search">
+              <label for="auto_search">Auto-search</label>
+            </div>
+            <div>
+               <p id="loading_message"></p>
+            </div>
+            <p class="progress_counter mt-auto">Defined words: <strong><span id="defined_words_count">0</span>/<span id="words_count"></span></strong></p>
+            <p class="progress_counter">Failed to define: <strong><span id="failed_words_count">0</span></strong></p>
+        </div>
     </div>
     <button type="button" class="btn btn-secondary btn-floating btn-lg" id="btn-back-to-top">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16">  <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5"/></svg>
         Back to top
     </button>
+
+    <div class="modal fade" id="export_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header d-flex justify-content-center">
+            <div class="w-100 text-center"><h1 class="modal-title fs-5" id="exampleModalLabel">Download</h1></div>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+
+          <div class="modal-body">
+              <div>
+                  <p id="form_summary"></p>
+              </div>
+              <div>
+                  <form>
+                      {% csrf_token %}
+                      <div class="form-check">
+                          <input class="form-check-input" type="checkbox" value="" id="only_defined" checked>
+                          <label class="form-check-label" for="only_defined">
+                            Include only words with definitions
+                          </label>
+                      </div>
+                  </form>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-success" id="dowload_button">Download</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
 </div>
 {% endblock %}
 
@@ -77,13 +112,13 @@ Vocabulary Words
 <script src="{% static 'vocab/js/react.development.js' %}"></script>
 <script src="{% static 'vocab/js/react-dom.development.js' %}"></script>
 <script src="{% static 'vocab/js/babel.min.js' %}"></script>
-<script src="{% static 'vocab/js/vars.js' %}"></script>
 <script src="{% static 'vocab/js/js.cookie.min.js' %}"></script>
 
 <script>
-    var initial_table_data = {{ data|safe }}
+    var db_data = {{ data|safe }}
     var word_def_url = "{% url 'vocab:word_definition' %}"
     var db_name = "{{ db_name }}"
 </script>
-<script type="text/babel" src="{% static 'vocab/js/data_table.js' %}"></script>
+<!--<script type="text/babel"  src="{% static 'vocab/js/data_table.js' %}"></script>-->
+<script src="{% static 'vocab/js/bundle.js' %}"></script>
 {% endblock %}

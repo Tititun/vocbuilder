@@ -12,16 +12,22 @@ Kindle Vocab
   <div class="row">
     <div class="col-4">
     </div>
-    <div class="col-4">
-        <h1 id="main_header" class="text-center">Drag your vocab here:</h1>
-        <form action="{% url 'vocab:index' %}" class="dropzone" id="dropzone-main" method="post" enctype="multipart/form-data">
+    <div class="pt-5 col-4">
+        <h2 id="main_header" class="text-center">Drag your vocab.db here:</h2>
+        <form action="{% url 'vocab:index' %}" class="dropzone shadow" id="dropzone-main" method="post" enctype="multipart/form-data">
             {% csrf_token %}
         </form>
-        <div id="example_image_container">
-            <img id="example_image" src="{% static 'vocab/images/sqlite.png' %}" draggable="true">
-            <p><em>drag example</em></p>
+        <div id="example_image_container" class="d-flex flex-column justify-content-center align-items-center">
+            <img id="example_image" src="{% static 'vocab/images/sqlite.svg' %}" draggable="true" class="img-fluid">
+            <div>
+                <p class="mb-0 p-0">Want to see how it looks?</p>
+                <p class="p-0">Drag this
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16">
+                      <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5"/>
+                    </svg> example database.</p>
+            </div>
+
         </div>
-    </div>
     <div class="col-4">
     </div>
   </div>
@@ -34,6 +40,8 @@ Kindle Vocab
 <script src="{% static 'vocab/js/js.cookie.min.js' %}"></script>
 <script>
     var post_main_url = '{% url "vocab:index" %}'
+    document.querySelector('#example_image').addEventListener('mouseenter', e => e.target.classList.add('big'))
+    document.querySelector('#example_image').addEventListener('mouseleave', e => e.target.classList.remove('big'))
 </script>
 <script src="{% static 'vocab/js/dropbox-main.js' %}"></script>
 {% endblock %}
