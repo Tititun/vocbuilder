@@ -40,19 +40,30 @@ def is_sqlite(file):
         return
 
 
-def read_db(path: str, num_rows: int = None) -> List[Tuple[str]]:
+def read_db(path: str, num_rows: int = None, word: str = None) \
+        -> List[List[Tuple[str]]]:
     """
     read the sqlite3 database and return a list of tuples with values:
     stem, title, authors, word, usage
     """
     print(path)
+    context = {}
     conn = sqlite3.connect(path)
     cursor = conn.cursor()
-    statement = '''
-        select w.stem, bi.title, bi.authors, w.word, l."usage" 
+    if word:
+        context['word'] = word
+        statement = '''
+        select w.stem, bi.title, bi.authors, w.word, l."usage", ROW_NUMBER() OVER()
         from LOOKUPS l JOIN WORDS w ON l.word_key = w.id 
-        JOIN BOOK_INFO bi ON l.book_key = bi.id;'''
-    cursor.execute(statement)
+        JOIN BOOK_INFO bi ON l.book_key = bi.id
+        WHERE w.stem = :word AND w.lang = 'en';
+        '''
+    else:
+        statement = '''
+        select w.stem, bi.title, bi.authors, w.word, l."usage", ROW_NUMBER() OVER()
+        from LOOKUPS l JOIN WORDS w ON l.word_key = w.id 
+        JOIN BOOK_INFO bi ON l.book_key = bi.id WHERE w.lang = 'en';'''
+    cursor.execute(statement, context)
     result = cursor.fetchall()[:num_rows]
     cursor.close()
     conn.close()
@@ -82,104 +93,88 @@ def commit_to_db(stem: str, title: str, authors: str, word_orig: str,
     return dict_record, created
 
 
-def create_vocab_objects(stem: str, title: str, authors: str, word_orig: str,
-                         usage: str) -> bool:
+def create_vocab_objects(word, dict_record) -> bool:
     try:
-        logger.info('create_vocab_objects is called with argumments:\n'
-                    f'stem: {stem}\n'
-                    f'title: {title}\n'
-                    f'authors: {authors}\n'
-                    f'word: {word_orig}\n'
-                    f'usage: {usage}\n')
-        word = fetch_or_create(Word, stem=stem)
-        authors = fetch_or_create(Authors, name=authors)
-        book = fetch_or_create(Book, title=title, authors=authors)
-        fetch_or_create(Usage, context_word=word_orig, usage=usage.strip(),
-                        word=word, book=book)
-        dict_record, created = DictRecord.objects.get_or_create(
-            word=word,
-            dictionary_id=1
-        )
-        if dict_record.error_fetching:
-            logger.info('Skipping word fetching phase due to previous errors.')
-            return True
-        if created:
-            logger.info('new dictionary record created. Trying scraping...')
-            data = scrape_webster(stem)
-            if not data:
-                logger.error('scraping failed')
-                dict_record.error_fetching = True
-                dict_record.save()
-                return False
-            logger.info('successfully scraped the definition')
-            dict_record.pronunciation=', '.join(data['pronunciations'])
-            dict_record.did_you_know_header=data['did_you_know']['header']
-            dict_record.did_you_know=data['did_you_know']['text']
-            dict_record.url=data['url']
+        logger.info('new dictionary record created. Trying scraping...')
+        data = scrape_webster(word)
+        if not data:
+            logger.error('scraping failed')
+            dict_record.error_fetching = True
             dict_record.save()
-            for etymology in data['etymologies']:
-                Etymology.objects.create(
-                    etymology=etymology['etymology'],
-                    part_of_speech=etymology['part_of_speech'],
-                    dict_record=dict_record
+            return False
+        logger.info('successfully scraped the definition')
+        dict_record.pronunciation=', '.join(data['pronunciations'])
+        dict_record.did_you_know_header=data['did_you_know']['header']
+        dict_record.did_you_know=data['did_you_know']['text']
+        dict_record.url=data['url']
+        dict_record.save()
+        for etymology in data['etymologies']:
+            Etymology.objects.create(
+                etymology=etymology['etymology'],
+                part_of_speech=etymology['part_of_speech'],
+                dict_record=dict_record
+            )
+        for example in data['examples']:
+            ExampleUsage.objects.create(
+                text=example,
+                dict_record=dict_record
+            )
+        for derived in data['derived']:
+            Derived.objects.create(
+                text=derived['text'],
+                pronunciation=derived['pronunciation'],
+                part_of_speech=derived['part_of_speech'],
+                dict_record=dict_record
+            )
+        for entry in data['entries']:
+            definition = Definition.objects.create(
+                part_of_speech=entry['part_of_speech'],
+                dict_record=dict_record
+            )
+            for inflection in entry['inflections']:
+                Inflection.objects.create(
+                    inflection=inflection,
+                    definition=definition
                 )
-            for example in data['examples']:
-                ExampleUsage.objects.create(
-                    text=example,
-                    dict_record=dict_record
+            for sseq_dict in entry['sense_sequences']:
+                sense_sequence = SenseSequence.objects.create(
+                    role=sseq_dict['role'],
+                    definition=definition
                 )
-            for derived in data['derived']:
-                Derived.objects.create(
-                    text=derived['text'],
-                    pronunciation=derived['pronunciation'],
-                    part_of_speech=derived['part_of_speech'],
-                    dict_record=dict_record
-                )
-            for entry in data['entries']:
-                definition = Definition.objects.create(
-                    part_of_speech=entry['part_of_speech'],
-                    dict_record=dict_record
-                )
-                for inflection in entry['inflections']:
-                    Inflection.objects.create(
-                        inflection=inflection,
-                        definition=definition
+                for sense_dict in sseq_dict['senses']:
+                    sense = Sense.objects.create(
+                        definition=sense_dict['definition'],
+                        sense_sequence=sense_sequence
                     )
-                for sseq_dict in entry['sense_sequences']:
-                    sense_sequence = SenseSequence.objects.create(
-                        role=sseq_dict['role'],
-                        definition=definition
-                    )
-                    for sense_dict in sseq_dict['senses']:
-                        sense = Sense.objects.create(
-                            definition=sense_dict['definition'],
-                            sense_sequence=sense_sequence
+                    for sense_example in sense_dict['examples']:
+                        SenseExample.objects.create(
+                            text=sense_example,
+                            sense=sense
                         )
-                        for sense_example in sense_dict['examples']:
-                            SenseExample.objects.create(
-                                text=sense_example,
-                                sense=sense
-                            )
-                        for sense_label in sense_dict['labels']:
-                            SenseLabel.objects.create(
-                                label=sense_label,
-                                sense=sense,
-                            )
-                        for usage_note in sense_dict['usage_notes']:
-                            SenseUsageNote.objects.create(
-                                usage_note=usage_note,
-                                sense=sense,
-                            )
-            logger.info('successfully created database entries')
-            return True
+                    for sense_label in sense_dict['labels']:
+                        SenseLabel.objects.create(
+                            label=sense_label,
+                            sense=sense,
+                        )
+                    for usage_note in sense_dict['usage_notes']:
+                        SenseUsageNote.objects.create(
+                            usage_note=usage_note,
+                            sense=sense,
+                        )
+        logger.info('successfully created database entries')
+        return True
     except:
         logger.error(f'Error in {word}')
         logger.error(traceback.format_exc())
+        dict_record.error_fetching = True
+        dict_record.save()
         return False
 
 
 def get_definitions(records):
     data = {}
+    defined_words_count = 0
+    failed_count = 0
     words = defaultdict(lambda: {
             'usages': [],
             'definitions': []
@@ -203,7 +198,8 @@ def get_definitions(records):
                 for dr in w.dictrecord_set.all()
                 for ex in dr.exampleusage_set.all()
             ],
-            'pron': w.dictrecord_set.all()[0].pronunciation
+            'pron': w.dictrecord_set.all()[0].pronunciation,
+            'failed': w.dictrecord_set.all()[0].error_fetching
         }
         for w in
         Word.objects
@@ -218,8 +214,9 @@ def get_definitions(records):
 
     books = set()
     books_count = defaultdict(int)
+    seen = set()
     book_authors = set()
-    for stem, title, authors, word, usage, in records:
+    for stem, title, authors, word, usage, id_ in records:
         words[stem]['usages'].append({
             'usage': usage,
             'context': word,
@@ -228,22 +225,40 @@ def get_definitions(records):
                 'authors': authors
             }
         })
-        books_count[title] += 1
+        if stem not in seen:
+            books_count[title] += 1
+        seen.add(stem)
         words[stem]['definitions'] = word_definitions.get(stem, {}).get('definitions', [])
+        if words[stem]['definitions']:
+            defined_words_count += 1
         words[stem]['pron'] = word_definitions.get(stem, {}).get('pron', None)
         words[stem]['etymologies'] = word_definitions.get(stem, {}).get('etymologies', [])
         words[stem]['examples'] = word_definitions.get(stem, {}).get('examples', [])
+        words[stem]['word_id'] = id_
+        words[stem]['failed'] = word_definitions.get(stem, {}).get('failed')
+        if stem in word_definitions and not words[stem]['definitions']:
+            words[stem]['failed'] = True
+        if words[stem]['failed']:
+            failed_count += 1
         books.add(title)
         book_authors.add(authors)
     data['words'] = words
     data['books'] = sorted(list(books), key=lambda x: x.lower())
     data['book_authors'] = sorted(list(book_authors), key=lambda x: x.lower())
     data['books_count'] = books_count
+    data['words_count'] = len(words)
+    data['defined_words_count'] = defined_words_count
+    data['failed_count'] = failed_count
     return data
 
 
 if __name__ == '__main__':
-    from django.db import connection
-    records = read_db('static/vocab/vocab.db', num_rows=None)
-    print(get_definitions(records))
-    print(len(connection.queries))
+    # from django.db import connection
+    # records = read_db('static/vocab/vocab.db', num_rows=None)
+    # print(records)
+    # print(list(get_definitions(records)['words'].items()))
+    # print(len(connection.queries))
+
+    from django.db.models import Count
+    Word.objects.all().annotate(sense_count=Count('dictrecord__definition__sensesequence__sense')).filter(sense_count=0).delete()
+    Word.objects.filter(dictrecord__error_fetching=1).delete()
