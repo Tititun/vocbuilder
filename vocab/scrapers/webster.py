@@ -24,7 +24,10 @@ def scrape_webster(word: str) -> Optional[dict]:
 
     link = 'https://www.merriam-webster.com/dictionary/' + word
     logger.info(f'getting {link}')
-    response = requests.get(link, headers=HEADERS)
+    try:
+        response = requests.get(link, headers=HEADERS, timeout=5)
+    except requests.Timeout:
+        response = requests.get(link, headers=HEADERS)
     if not response.ok:
         logger.exception(f'Error in response for {word}')
         return
@@ -39,6 +42,8 @@ def scrape_webster(word: str) -> Optional[dict]:
     if pronunciations:
         pronunciations = [a.text.strip() for a in pronunciations.select('a')]
         data['pronunciations'] = pronunciations
+    else:
+        data['pronunciations'] = []
     logger.info(f'pronunciations: {pronunciations}')
 
     dict_entries = soup.select('div[id^=dictionary-entry-]')
@@ -53,7 +58,7 @@ def scrape_webster(word: str) -> Optional[dict]:
             match = re.search(r'([^(]*)\(?', part_of_speech)
             if match:
                 part_of_speech = match.groups()[0].strip()
-            entry_record['part_of_speech'] = part_of_speech
+        entry_record['part_of_speech'] = part_of_speech
         logger.info(f'part of speech: {part_of_speech}')
         inflections = entry.select('.if')
         if inflections:
@@ -62,6 +67,20 @@ def scrape_webster(word: str) -> Optional[dict]:
         logger.info(f'inflections: {inflections}')
 
         ssqs = entry.select('.vg')
+        if not ssqs:
+            sense_definition = entry.select_one('.cxl-ref')
+            ssq_record = {
+                    'role': None,
+                    'senses': [{'definition': sense_definition.text,
+                                'examples': [],
+                                'labels': [],
+                                'usage_notes': []
+                                }]
+            }
+            entry_record['sense_sequences'].append(ssq_record)
+            data['entries'].append(entry_record)
+            continue
+
         logger.info(f'found {len(dict_entries)} sense sequences')
         for idx_ssq, ssq in enumerate(ssqs):
             ssq_record = {'senses': []}
@@ -84,6 +103,10 @@ def scrape_webster(word: str) -> Optional[dict]:
                     definition = sd.select_one('.dtText')
                     if definition:
                         definition = definition.text.lstrip(': ')
+                    else:
+                        definition = sd.select_one('.unText')
+                        if definition:
+                            definition = definition.text.lstrip(': ')
                     logger.info(f'definition: {definition}')
                     sd_examples = sd.select('.sub-content-thread')
                     if sd_examples:
@@ -93,7 +116,7 @@ def scrape_webster(word: str) -> Optional[dict]:
                     if labels:
                         labels = [l.text.strip() for l in labels]
                         logger.info(f'labels: {labels}')
-                    usage_notes = sd.select('.un')
+                    usage_notes = sd.select('.unText')
                     if usage_notes:
                         usage_notes = [un.text.strip() for un in usage_notes]
                         logger.info(f'usage notes: {usage_notes}')
@@ -175,4 +198,6 @@ def scrape_webster(word: str) -> Optional[dict]:
 
 
 if __name__ == '__main__':
-    scrape_webster('quixotical')
+    from pprint import pprint
+    pprint(scrape_webster('insula'))
+# rebate shorn
