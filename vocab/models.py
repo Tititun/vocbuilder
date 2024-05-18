@@ -54,7 +54,7 @@ class DictRecord(models.Model):
 
 class Definition(models.Model):
     dict_record = models.ForeignKey(DictRecord, on_delete=models.CASCADE)
-    part_of_speech = models.CharField(max_length=100)
+    part_of_speech = models.CharField(max_length=100, null=True, blank=True)
 
 
 class Inflection(models.Model):
