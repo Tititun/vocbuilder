@@ -44,6 +44,7 @@ function DataTable( {books} ) {
         failed_word_count.innerHTML = db_data.failed_count;
         document.querySelector('#words_count').innerHTML = db_data.words_count
         document.querySelectorAll('.progress_counter').forEach(el => el.style.visibility = 'visible')
+
         return () => {
             document.querySelector('#word_sort').removeEventListener('click', wordSortCallback)
             document.querySelectorAll('.book_check').forEach(el => el.removeEventListener('change', bookCheckCallback))
@@ -105,10 +106,12 @@ function DataTable( {books} ) {
         if (e.details['loading']) {
             word_data['loading'] = true;
         } else if (e.details['failed']) {
-            word_data['failed'] = true;
+            if (!word_data['failed']) {
+                db_data.failed_count += 1
+                word_data['failed'] = true;
+                failed_word_count.innerHTML = db_data.failed_count
+            }
             word_data['loading'] = false;
-            db_data.failed_count += 1
-            failed_word_count.innerHTML = db_data.failed_count
         } else {
             for (const key of ['failed', 'definitions', 'pron', 'etymologies', 'examples', 'loading']) {
                 word_data[key] = e.details[key]
@@ -305,3 +308,22 @@ document.querySelector('#search_clear').addEventListener('click', () =>
     })
 
 fetch_definition()
+
+
+const popoverTrigger = document.querySelector('[data-bs-toggle="popover"]')
+const popover = new bootstrap.Popover(popoverTrigger, {trigger: 'focus', sanitize: false, html: true})
+
+document.querySelector('#failed_popover').addEventListener('show.bs.popover', () => {
+    let content = '<div id="failed_popover_body">'
+        for (let word of Object.keys(db_data.words)) {
+            let data = db_data.words[word]
+            if (data.failed) {
+                content += `<a class="text-dark" href="#anchor_${data['word_id']}"><strong>${word}</strong></p>`
+            }
+        }
+        content += '</div>'
+    popover.setContent(  {
+        '.popover-body': content}
+    )
+})
+

@@ -64,7 +64,15 @@ Vocabulary Words
                <p id="loading_message"></p>
             </div>
             <p class="progress_counter mt-auto">Defined words: <strong><span id="defined_words_count">0</span>/<span id="words_count"></span></strong></p>
-            <p class="progress_counter">Failed to define: <strong><span id="failed_words_count">0</span></strong></p>
+            <p class="progress_counter">
+                <span class="text-decoration-underline text-primary" tabindex="0"
+                 data-bs-container="body" data-bs-toggle="popover" data-bs-placement="left" data-bs-content="Failed"
+                 id="failed_popover"
+                >
+                    Failed to define:
+                </span>
+                <strong><span id="failed_words_count">0</span></strong></span>
+            </p>
         </div>
     </div>
     <button type="button" class="btn btn-secondary btn-floating btn-lg" id="btn-back-to-top">
