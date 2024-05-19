@@ -299,6 +299,9 @@ document.querySelectorAll('#book_container .form-check').forEach(
         el.addEventListener('mouseleave', e => e.target.classList.remove('bg-primary-subtle'))
     }
 )
-
+document.querySelector('#search_clear').addEventListener('click', () => 
+    {search_field.value = '';
+     search_field.dispatchEvent(new Event('change'))
+    })
 
 fetch_definition()
