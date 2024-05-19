@@ -227,7 +227,6 @@ def get_definitions(records):
         })
         if stem not in seen:
             books_count[title] += 1
-        seen.add(stem)
         words[stem]['definitions'] = word_definitions.get(stem, {}).get('definitions', [])
         if words[stem]['definitions']:
             defined_words_count += 1
@@ -238,8 +237,9 @@ def get_definitions(records):
         words[stem]['failed'] = word_definitions.get(stem, {}).get('failed')
         if stem in word_definitions and not words[stem]['definitions']:
             words[stem]['failed'] = True
-        if words[stem]['failed']:
+        if words[stem]['failed'] and stem not in seen:
             failed_count += 1
+        seen.add(stem)
         books.add(title)
         book_authors.add(authors)
     data['words'] = words
