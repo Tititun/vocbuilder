@@ -1,5 +1,7 @@
 import { ABC_asc, ABC_desc } from "./vars";
 import { Card, word_count_element, fetch_definition, auto_search } from "./components/card.js"
+import React from 'react';
+import ReactDOM from 'react-dom'
 
 // const db_data = initial_table_data;
 const search_field = document.querySelector("#search_field");
@@ -25,7 +27,6 @@ document.querySelector('#book_select').addEventListener('click', (e) => {
     })
     document.querySelector('.book_check').dispatchEvent(new Event('change'))
 })
-
 
 
 function DataTable( {books} ) {
