@@ -63,12 +63,13 @@ function DataTable( {books} ) {
 
     React.useEffect(() => {     // search and book filer setup
         const no_results = document.querySelector('#no_results');
-        if (!document.querySelectorAll('.word_card_container:not(.hide)').length) {
+        const displayed = document.querySelectorAll('.word_card_container:not(.hide)')
+        if (!displayed.length) {
             no_results.style.display = 'block'
         } else {
             no_results.style.display = 'none'
         }
-        
+        word_count_element.innerHTML = displayed.length
     }, [search, book_names])
 
     const wordSortCallback = (e) => {
