@@ -25,6 +25,9 @@
               <li class="nav-item">
                   <a class="nav-link" href="#">How it works</a>
               </li>
+              <li class="nav-item" data-bs-toggle="tooltip" data-bs-title="in development">
+                  <a class="nav-link disabled"  href="#">API</a>
+              </li>
           </ul>
           {% if not is_main %}
           <form id="search">
@@ -45,6 +48,10 @@
     {% block content %}
     {% endblock %}
     <script src="{% static '/vocab/js/bootstrap.bundle.min.js' %}" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    </script>
     {% block js %}
     {% endblock %}
 </body>
