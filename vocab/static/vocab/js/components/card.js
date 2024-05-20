@@ -78,11 +78,26 @@ export const Card = React.memo(function ({rec_name, to_show, d}) {
         )
     })
     cardData.definitions.map((def_record, def_idx) => {
-        definitions.push(
-            <li key={def_idx}>
-                { def_record.sense_definition }
-            </li>
-        )
+        let definition = def_record.sense_definition
+        if (def_record.linked_word) {
+            let linked_word = def_record.linked_word;
+            let linked_group = def_record.linked_group
+            let idx = definition.indexOf(linked_group)
+            const part_1 = definition.substring(0, idx)
+            // const part_2 = definition.substring(idx, linked_group.length)
+            const part_3 = definition.substring(idx + linked_group.length)
+            definitions.push(
+                <li key={def_idx}>
+                    {part_1}<a target="_blank" href={linked_word}>{linked_group}</a>{part_3}
+                </li>
+            )
+        } else {
+            definitions.push(
+                <li key={def_idx}>
+                    { definition }
+                </li>
+            )
+        }
     })
     cardData.etymologies.map((eti_record, eti_idx) => {
         eties.push(

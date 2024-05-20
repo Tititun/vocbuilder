@@ -1,5 +1,6 @@
 from collections import defaultdict
 import logging
+import re
 import sqlite3
 import traceback
 from typing import List, Tuple
@@ -210,9 +211,22 @@ def get_definitions(records):
             'dictrecord_set__etymology_set',
             'dictrecord_set__exampleusage_set',
         )
-
         }
 
+    for w, data in word_definitions.items():
+        for sense in data['definitions']:
+            definition = sense.get('sense_definition', '')
+            match = re.search(
+                r'(see\s(?P<gr>\w+)\s)?((?P<gr1>\w+)\s)?(entry\s\d+\D?\s)?'
+                r'(?P<gr2>(\w+)\s)?sense\s(transitive\s)?\d+[a-z]?(\(\d\))?',
+                definition)
+            if match:
+                for group in ['gr', 'gr1', 'gr2']:
+                    linked_word = match.group(group)
+                    if linked_word:
+                        sense['linked_group'] = match.group()
+                        sense['linked_word'] = 'https://www.merriam-webster.com/dictionary/' + linked_word
+                        break
     books = set()
     books_count = defaultdict(int)
     seen = set()
