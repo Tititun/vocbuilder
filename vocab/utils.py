@@ -146,6 +146,7 @@ def create_vocab_objects(word, dict_record) -> bool:
                 for sense_dict in sseq_dict['senses']:
                     sense = Sense.objects.create(
                         definition=sense_dict['definition'],
+                        letter=sense_dict['letter'],
                         sense_sequence=sense_sequence
                     )
                     for sense_example in sense_dict['examples']:
@@ -281,5 +282,8 @@ if __name__ == '__main__':
     # print(list(get_definitions(records)['words'].items()))
     # print(len(connection.queries))
 
-    Word.objects.all().annotate(sense_count=Count('dictrecord__definition__sensesequence__sense')).filter(sense_count=0).delete()
-    Word.objects.filter(dictrecord__error_fetching=1).delete()
+    # Word.objects.all().annotate(sense_count=Count('dictrecord__definition__sensesequence__sense')).filter(sense_count=0).delete()
+    # Word.objects.filter(dictrecord__error_fetching=1).delete()
+
+    Word.objects.filter(stem='tumbler').delete()
+
