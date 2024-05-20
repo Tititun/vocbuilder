@@ -6,6 +6,12 @@
 Vocabulary Words
 {% endblock %}
 
+{% block navlinks %}
+<li class="nav-item">
+  <a class="nav-link" href="#">Quiz</a>
+</li>
+{% endblock %}
+
 {% block content %}
 <div class="container-fluid d-flex">
     <div class="col-2 pt-5 nav_column">
@@ -125,9 +131,6 @@ Vocabulary Words
 
 {% block js %}
 <!--swap 'development' to 'production.min'-->
-<script src="{% static 'vocab/js/react.development.js' %}"></script>
-<script src="{% static 'vocab/js/react-dom.development.js' %}"></script>
-<script src="{% static 'vocab/js/babel.min.js' %}"></script>
 <script src="{% static 'vocab/js/js.cookie.min.js' %}"></script>
 
 <script>
