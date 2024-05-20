@@ -107,5 +107,5 @@ class Derived(models.Model):
 
 
 class Image(models.Model):
-    word_id = models.ForeignKey(Word, on_delete=models.CASCADE)
+    word = models.ForeignKey(Word, on_delete=models.CASCADE)
     src = models.TextField(null=False)
