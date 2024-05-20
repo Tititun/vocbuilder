@@ -6,7 +6,11 @@ const search_field = document.querySelector("#search_field");
 const defined_word_count = document.querySelector('#defined_words_count')
 const failed_word_count = document.querySelector('#failed_words_count')
 const download_button = document.querySelector('#dowload_button')
+const modal_progress_success = document.querySelector('#modal_progress_success')
+const modal_progress_failed = document.querySelector('#modal_progress_failed')
 
+const modal_progress_bar = document.querySelector('#modal_progress')
+const modal_progress_bar_tooltip = new bootstrap.Tooltip(modal_progress_bar)
 
 document.querySelector('#book_clear').addEventListener('click', (e) => {
     document.querySelectorAll('.book_check').forEach(el => {
@@ -42,6 +46,9 @@ function DataTable( {books} ) {
         
         defined_word_count.innerHTML = db_data.defined_words_count;
         failed_word_count.innerHTML = db_data.failed_count;
+        if (export_modal.style.display !== 'none') {
+            count_words_to_export()
+        }
         document.querySelector('#words_count').innerHTML = db_data.words_count
         document.querySelectorAll('.progress_counter').forEach(el => el.style.visibility = 'visible')
 
@@ -124,6 +131,9 @@ function DataTable( {books} ) {
         db_data.words[word] = word_data
         console.log('received_definition trigger')
         setBigData(structuredClone(db_data.words))
+        if (export_modal.style.display !== 'none') {
+            count_words_to_export()
+        }
         if (!e.details['loading']) 
             {
                 const loading_msg = `${e.details.failed ? "failed" : "loaded"} <a href="#anchor_${e.details.word_id}">${e.details.word}</a>`
@@ -240,18 +250,34 @@ const count_words_to_export = function() {
     } else {
         only_defined = true;
     }
-    let query = `.word_card_container${only_defined ? '[data-defined="true"]:not(.failed)' : ''}:not(.hide) .book_title`
+    let query = `.word_card_container:not(.hide)`
     const modal_summary = document.querySelector('#form_summary')
     let cards = document.querySelectorAll(query)
 
     const unique_books = new Set();
+    let defined = 0
+    let failed = 0
     for (const card of cards) {
-        unique_books.add(card.textContent)
+        if (!only_defined) {
+            unique_books.add(card.querySelector('.book_title').textContent)
+        }
+        if (card.dataset.defined == 'true') {
+            if (only_defined) {
+                unique_books.add(card.querySelector('.book_title').textContent)
+            }
+            defined += 1
+        } else if (card.classList.contains('failed')) {
+            failed += 1
+        }
+        
     }
 
-    modal_summary.innerHTML = `<p>Download ${cards.length} words for ${unique_books.size} books</p>`
+    update_modal_progress(cards.length, failed, defined)
+
+    modal_summary.innerHTML = `<p>Download ${only_defined ? defined :cards.length} words for ${unique_books.size} books</p>`
 
     query = `.word_card_container${only_defined ? '[data-defined="true"]:not(.failed)' : ''}:not(.hide)`
+    
     cards = document.querySelectorAll(query)
     const tsv_data_total = []
     for (const card of cards) {
@@ -267,13 +293,22 @@ const count_words_to_export = function() {
     const blob = new Blob([content], {type: 'text/csv;charset=utf-8'})
     const url = URL.createObjectURL(blob);
 
-    const a = document.createElement("a");
-    console.log(url)
-    a.href = url;
-    a.download = 'vocab.tsv'
-    a.click()
+    // const a = document.createElement("a");
+    // console.log(url)
+    // a.href = url;
+    // a.download = 'vocab.tsv'
+    // a.click()
 }
 
+const update_modal_progress = function(total, failed, defined) {
+    console.log(defined, failed, total)
+    modal_progress_success.querySelector('div').innerHTML = defined
+    modal_progress_success.style.width = Math.floor(defined / total * 100) + '%'
+    
+    modal_progress_failed.querySelector('div').innerHTML = failed
+    modal_progress_failed.style.width = Math.ceil(failed / total * 100) + '%'
+    modal_progress_bar_tooltip.setContent({'.tooltip-inner': `${defined} defined, ${failed} failed out of ${total} words`})
+}
 
 export_modal.addEventListener('show.bs.modal', count_words_to_export)
 
