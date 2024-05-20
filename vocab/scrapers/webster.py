@@ -120,11 +120,15 @@ def scrape_webster(word: str) -> Optional[dict]:
                     if usage_notes:
                         usage_notes = [un.text.strip() for un in usage_notes]
                         logger.info(f'usage notes: {usage_notes}')
+                    letter = sd.select_one('.letter')
+                    if letter:
+                        letter = letter.text
                     ssq_record['senses'].append({
                         'definition': definition,
                         'examples': sd_examples,
                         'labels': labels,
-                        'usage_notes': usage_notes
+                        'usage_notes': usage_notes,
+                        'letter': letter,
                     })
             entry_record['sense_sequences'].append(ssq_record)
 
@@ -199,5 +203,6 @@ def scrape_webster(word: str) -> Optional[dict]:
 
 if __name__ == '__main__':
     from pprint import pprint
-    pprint(scrape_webster('insula'))
+    pprint(scrape_webster('tumbler'))
 # rebate shorn
+# insula

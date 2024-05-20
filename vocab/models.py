@@ -70,6 +70,7 @@ class SenseSequence(models.Model):
 class Sense(models.Model):
     sense_sequence = models.ForeignKey(SenseSequence, on_delete=models.CASCADE)
     definition = models.TextField(null=False, blank=False)
+    letter = models.CharField(max_length=10, null=True)
 
 
 class SenseExample(models.Model):
