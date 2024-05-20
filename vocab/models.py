@@ -104,3 +104,8 @@ class Derived(models.Model):
     text = models.CharField(max_length=200, null=False, blank=False)
     pronunciation = models.CharField(max_length=200, null=True)
     part_of_speech = models.CharField(max_length=100, null=True)
+
+
+class Image(models.Model):
+    word_id = models.ForeignKey(Word, on_delete=models.CASCADE)
+    src = models.TextField(null=False)
