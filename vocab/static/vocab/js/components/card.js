@@ -125,9 +125,11 @@ export const Card = React.memo(function ({rec_name, to_show, d}) {
                 :
                 <div key={2} className="word_card shadow col-md-12 col-lg-6 flex-grow-0 border rounded-2 d-flex flex-column justify-content-center">
                         
-                    <ul key={1} className="align-self-center">
-                        { definitions }
-                    </ul>
+                    
+                        {cardData['failed'] ?
+                        <p className="align-self-center"><em>Failed to find a definition</em></p> :
+                        <ul key={1} className="align-self-center">{definitions}</ul> }
+                    
                     
                     <div key={2} className="container d-flex justify-content-center">
                         <div className="container d-flex justify-content-center">
