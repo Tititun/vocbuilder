@@ -28,6 +28,8 @@
               <li class="nav-item" data-bs-toggle="tooltip" data-bs-title="in development">
                   <a class="nav-link disabled"  href="#">API</a>
               </li>
+              {% block navlinks %}
+              {% endblock %}
           </ul>
           {% if not is_main %}
           <form id="search">
