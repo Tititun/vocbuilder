@@ -1,3 +1,5 @@
+import React from "react";
+
 const etiCollapse = function (e) {
     const button = e.target;
     const selector = e.target.dataset.target;
