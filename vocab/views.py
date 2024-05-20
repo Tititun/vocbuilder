@@ -6,7 +6,7 @@ from django.http import HttpRequest, JsonResponse
 from django.conf import settings
 from django.shortcuts import redirect, render
 from .utils import (is_sqlite, read_db, commit_to_db, create_vocab_objects,
-                    get_definitions)
+                    get_definitions, get_ranking)
 
 
 def index(request: HttpRequest):
@@ -30,7 +30,9 @@ def index(request: HttpRequest):
                                                          'books': data['books'],
                                                          'books_count': data['books_count'],
                                                          'authors': data['book_authors']})
-    return render(request, 'vocab/main.html', {'is_main': True})
+    ranking = get_ranking()
+    return render(request, 'vocab/main.html', {'is_main': True,
+                                               'ranking': ranking})
 
 
 def word_definition(request: HttpRequest):
@@ -42,7 +44,6 @@ def word_definition(request: HttpRequest):
         file_path = os.path.abspath('vocab/static/vocab/vocab.db')
     else:
         file_path = os.path.join(settings.MEDIA_ROOT, db_name)
-    print('FILE PATH', file_path)
     error_message = {
         'word': word,
         'word_id': word_id,
@@ -73,17 +74,3 @@ def word_definition(request: HttpRequest):
         'examples': word_data['examples']
     }
     return JsonResponse(data)
-
-
-    # data = {'word': request.POST['word'],
-    #         'failed': True,
-    #         'loading': False,
-    #         'word_id': request.POST['word_id'],
-    #         'usages': [{
-    #             'context': f'TEST {request.POST["word"]} USAGE CONTEXT',
-    #             'book': {'title': 'Vanity Fair: A Novel Without A Hero (with Original Illustrations, and Audiobook link)',
-    #                      'authors': 'Thackeray, William Makepeace'}}],
-    #         'definitions': ['SOME DEFINITIONS'],
-    #         'pron': 'TEST PRON',
-    #         'etymologies': ['ety1', 'ety2'],
-    #         'examples': ['some fun example']}

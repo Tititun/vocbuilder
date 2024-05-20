@@ -3,6 +3,7 @@ import logging
 import sqlite3
 import traceback
 from typing import List, Tuple
+from django.db.models import Count
 
 import django
 django.setup()
@@ -252,6 +253,13 @@ def get_definitions(records):
     return data
 
 
+def get_ranking():
+    words = Word.objects.annotate(usage_count=Count('usage')).values_list(
+        'stem', 'usage_count').order_by('-usage_count')[:15]
+    return words
+
+
+
 if __name__ == '__main__':
     # from django.db import connection
     # records = read_db('static/vocab/vocab.db', num_rows=None)
@@ -259,6 +267,5 @@ if __name__ == '__main__':
     # print(list(get_definitions(records)['words'].items()))
     # print(len(connection.queries))
 
-    from django.db.models import Count
     Word.objects.all().annotate(sense_count=Count('dictrecord__definition__sensesequence__sense')).filter(sense_count=0).delete()
     Word.objects.filter(dictrecord__error_fetching=1).delete()
