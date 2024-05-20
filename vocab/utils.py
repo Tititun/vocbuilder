@@ -187,6 +187,7 @@ def get_definitions(records):
             'definitions': [
                  {'sense_key': s.id,
                   'sense_definition': s.definition,
+                  'tags': [t.label for t in s.senselabel_set.all()],
                   'letter': s.letter}
                   for dr in w.dictrecord_set.all()
                   for df in dr.definition_set.all()
@@ -210,7 +211,7 @@ def get_definitions(records):
         Word.objects
             .filter(stem__in=[r[0] for r in records])
             .prefetch_related(
-            'dictrecord_set__definition_set__sensesequence_set__sense_set',
+            'dictrecord_set__definition_set__sensesequence_set__sense_set__senselabel_set',
             'dictrecord_set__etymology_set',
             'dictrecord_set__exampleusage_set',
         )
@@ -278,27 +279,27 @@ def get_ranking():
 
 
 if __name__ == '__main__':
-    # from django.db import connection
-    # records = read_db('static/vocab/vocab.db', num_rows=None)
-    # print(records)
-    # print(list(get_definitions(records)['words'].items()))
-    # print(len(connection.queries))
+    from django.db import connection
+    records = read_db('static/vocab/vocab.db', num_rows=None)
+    print(records)
+    print(list(get_definitions(records)['words'].items()))
+    print(len(connection.queries))
 
     # Word.objects.all().annotate(sense_count=Count('dictrecord__definition__sensesequence__sense')).filter(sense_count=0).delete()
     # Word.objects.filter(dictrecord__error_fetching=1).delete()
 
-    words_to_del = set()
-    words = Word.objects.prefetch_related(
-            'dictrecord_set__definition_set__sensesequence_set__sense_set')
-    for w in words:
-        for dr in w.dictrecord_set.all():
-            for df in dr.definition_set.all():
-                for sseq in df.sensesequence_set.all():
-                    for s in sseq.sense_set.filter(definition__regex='such as$'):
-                        print(s.definition)
-                        words_to_del.add(w.id)
-                        print(w.stem)
-    print(words_to_del)
+    # words_to_del = set()
+    # words = Word.objects.prefetch_related(
+    #         'dictrecord_set__definition_set__sensesequence_set__sense_set')
+    # for w in words:
+    #     for dr in w.dictrecord_set.all():
+    #         for df in dr.definition_set.all():
+    #             for sseq in df.sensesequence_set.all():
+    #                 for s in sseq.sense_set.filter(definition__regex='such as$'):
+    #                     print(s.definition)
+    #                     words_to_del.add(w.id)
+    #                     print(w.stem)
+    # print(words_to_del)
     # Word.objects.filter(id__in=words_to_del).delete()
         # print(w.stem)
 

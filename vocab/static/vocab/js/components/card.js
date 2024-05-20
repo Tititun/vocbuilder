@@ -86,6 +86,10 @@ export const Card = React.memo(function ({rec_name, to_show, d}) {
         } else if (definition.endsWith('such as')) {
             such_as = true
         }
+        const tags = []
+        def_record.tags.map((tag, tag_idx) => {
+            tags.push(<span key={tag_idx} className="badge rounded-pill text-bg-secondary ms-1">{tag}</span>)
+        })
         if (def_record.linked_word) {
             let linked_word = def_record.linked_word;
             let linked_group = def_record.linked_group
@@ -95,12 +99,14 @@ export const Card = React.memo(function ({rec_name, to_show, d}) {
             definitions.push(
                 <li key={def_idx} className={letter ? such_as && letter ? 'has_letter list-unstyled' : 'has_letter' : ''}>
                     {letter && such_as ? <strong>{letter})</strong> : ''}{part_1}<a target="_blank" href={linked_word}>{linked_group}</a>{part_3}
+                    {tags}
                 </li>
             )
         } else {
             definitions.push(
                 <li key={def_idx} className={letter ? such_as && letter ? 'has_letter list-unstyled' : 'has_letter' : ''}>
                     {letter && such_as? <strong>{letter})</strong> : ''} { definition }
+                    {tags}
                 </li>
             )
         }
