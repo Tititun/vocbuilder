@@ -184,8 +184,10 @@ def get_definitions(records):
         })
     word_definitions = {
         w.stem: {
-            'definitions': [{'sense_key': s.id,
-                  'sense_definition': s.definition}
+            'definitions': [
+                 {'sense_key': s.id,
+                  'sense_definition': s.definition,
+                  'letter': s.letter}
                   for dr in w.dictrecord_set.all()
                   for df in dr.definition_set.all()
                   for ss in df.sensesequence_set.all()
@@ -285,5 +287,19 @@ if __name__ == '__main__':
     # Word.objects.all().annotate(sense_count=Count('dictrecord__definition__sensesequence__sense')).filter(sense_count=0).delete()
     # Word.objects.filter(dictrecord__error_fetching=1).delete()
 
-    Word.objects.filter(stem='tumbler').delete()
+    words_to_del = set()
+    words = Word.objects.prefetch_related(
+            'dictrecord_set__definition_set__sensesequence_set__sense_set')
+    for w in words:
+        for dr in w.dictrecord_set.all():
+            for df in dr.definition_set.all():
+                for sseq in df.sensesequence_set.all():
+                    for s in sseq.sense_set.filter(definition__regex='such as$'):
+                        print(s.definition)
+                        words_to_del.add(w.id)
+                        print(w.stem)
+    print(words_to_del)
+    # Word.objects.filter(id__in=words_to_del).delete()
+        # print(w.stem)
+
 
