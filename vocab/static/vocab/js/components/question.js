@@ -1,5 +1,7 @@
 import React from 'react';
 import _ from "lodash";
+import { composeDefinitions } from './utils';
+
 
 export const Question = function({word}) {
     console.log(word)
@@ -13,9 +15,11 @@ export const Question = function({word}) {
     let usage_begin = usage.substring(0, index);
     let ctx = usage.substring(index, index + context.length);
     let usage_end = usage.substring(index + context.length)
-        
+    let definitions = composeDefinitions(db_data.words[word].definitions)
+
+
     return (
-            <div key={db_data.words[word]['word_id']} className="card ms-2 shadow col-4">
+            <div id={`question_${db_data.words[word]['word_id']}`}  key={db_data.words[word]['word_id']} className="card ms-2 shadow col-4">
                 <div className="card-body  d-flex flex-column">
                     <h5 className="card-title"></h5>
                     <p className="card-text">
@@ -49,14 +53,16 @@ export const Question = function({word}) {
                         {usage_end}
                     </p>
                     <p className="blockquote-footer">{use_record.book.title}</p>
-                    <div className="mt-auto">
-                        <a onClick={() => {
+                    <div className="mt-auto d-flex">
+                        <button type="button" className="btn btn-link" onClick={() => {
                             const input_el = document.querySelector(`#quiz_${db_data.words[word]['word_id']}`);
                             const first_letter = ctx.slice(0, 1)
                             input_el.dataset.firstLetter = first_letter
                             input_el.value = first_letter
-                        }} className="#" class="card-link">First letter?</a>
-                        <a className="#" class="card-link">Check answer</a>
+                        }}>First letter?</button>
+                        <button type="button" className="btn btn-link ms-auto" data-bs-container="body">
+                             Show definition
+                        </button>
                     </div>
                 </div>
             </div>

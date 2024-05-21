@@ -161,7 +161,3 @@
 [data-bs-toggle="popover"] {
     cursor: pointer;
 }
-
-.popover-body {
-    background-color: #f8d7da;
-}

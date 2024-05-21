@@ -1,7 +1,6 @@
 import React from "react";
 
 export const composeDefinitions = function(definitions, with_tags=true) {
-    console.log('def', definitions)
     const result = []
     let such_as = false;
     definitions.map((def_record, def_idx) => {

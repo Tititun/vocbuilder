@@ -1,11 +1,11 @@
 import { ABC_asc, ABC_desc } from "./vars";
-import { Card, word_count_element, fetch_definition, auto_search } from "./components/card.js"
+import { Card, word_count_element, fetch_definition } from "./components/card.js"
 import { Quiz } from "./components/quiz.js";
 import React from 'react';
 import ReactDOM from 'react-dom'
 
 
-// const db_data = initial_table_data;
+const auto_search = document.querySelector("#auto_search");
 const search_field = document.querySelector("#search_field");
 const defined_word_count = document.querySelector('#defined_words_count')
 const failed_word_count = document.querySelector('#failed_words_count')
@@ -32,6 +32,7 @@ document.querySelector('#book_select').addEventListener('click', (e) => {
 
 
 function DataTable( {books} ) {
+    console.log('table rendering')
 
     const [bigData, setBigData] = React.useState(db_data.words)
     const [book_names, setBooks] = React.useState(books);
@@ -347,7 +348,7 @@ document.querySelector('#search_clear').addEventListener('click', () =>
 fetch_definition()
 
 
-const popoverTrigger = document.querySelector('[data-bs-toggle="popover"]')
+const popoverTrigger = document.querySelector('.progress_counter [data-bs-toggle="popover"]')
 const popover = new bootstrap.Popover(popoverTrigger, {trigger: 'focus', sanitize: false, html: true})
 
 document.querySelector('#failed_popover').addEventListener('show.bs.popover', () => {

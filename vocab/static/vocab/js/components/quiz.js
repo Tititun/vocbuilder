@@ -2,8 +2,17 @@ import React from 'react';
 import { Question } from './question.js'
 import _ from "lodash";
 
- 
+const quiz_link = document.querySelector('#quiz_link') 
+
 export const Quiz = function() {
+
+    React.useEffect(() => {
+        const myModal = new bootstrap.Modal(document.querySelector('#quiz_modal'))
+        const show_modal = () => myModal.show() 
+        quiz_link.addEventListener('click', show_modal)
+        return () => quiz_link.removeEventListener('click', show_modal)
+    })
+
     return (
         <div class="modal" id="quiz_modal" tabindex="-1">
             <div class="modal-dialog modal-xl" >

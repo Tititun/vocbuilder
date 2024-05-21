@@ -50,10 +50,6 @@ export const word_count_element = document.querySelector('#word_count')
 
 export const Card = React.memo(function ({rec_name, to_show, d}) {
     console.log('rendering card')
-    // console.log('rec_name', rec_name)
-    // console.log('book_names', book_names)
-    // console.log('to_show', to_show)
-    // const [cardData, setCardData] = React.useState(db_data.words[rec_name])
     const cardData = db_data.words[rec_name]
     const rec_idx = cardData["word_id"]
 
@@ -204,7 +200,6 @@ export const fetch_definition = function (word, word_id) {
     } else {
         query_data = { word, word_id }
     }
-    console.log('qury_data', query_data)
     
     const start_event = new Event('definition_received')
     start_event.details = {'word': query_data['word'], 'loading': true}
@@ -223,10 +218,8 @@ export const fetch_definition = function (word, word_id) {
         event.details = data
         document.querySelector('#root').dispatchEvent(event)
       if (!word) {
-            console.log('delaying')
             setTimeout(fetch_definition, 300)
         } else {
-            console.log('returning')
             // document.querySelector('#loading_message').innerHTML = ''
             return
         }
@@ -245,7 +238,3 @@ export const fetch_definition = function (word, word_id) {
     
 }
 
-export const auto_search = document.querySelector("#auto_search");
-auto_search.addEventListener('change', (e) => {
-    // console.log('CHANGE')
-})
