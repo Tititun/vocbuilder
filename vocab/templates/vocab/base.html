@@ -16,7 +16,7 @@
 <body>
     <nav class="shadow-sm navbar navbar-expand-lg navbar-light bg-light fixed-top">
       <div class="container-fluid d-flex justify-content-center">
-          <ul class="navbar-nav">
+          <ul class="navbar-nav d-flex flex-row justify-content-evenly w-25">
               {% if not is_main %}
               <li class="nav-item">
                   <a class="nav-link" href="{% url 'vocab:index' %}">Main page</a>

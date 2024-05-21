@@ -1,4 +1,5 @@
 import React from "react";
+import { composeDefinitions } from "./utils";
 
 const etiCollapse = function (e) {
     const button = e.target;
@@ -58,7 +59,6 @@ export const Card = React.memo(function ({rec_name, to_show, d}) {
 
     
     let usages = [];
-    let definitions = [];
     let eties = []; // etymologies
     let examples = [];
     cardData.usages.map((use_record, use_idx) => {
@@ -79,40 +79,8 @@ export const Card = React.memo(function ({rec_name, to_show, d}) {
             </li>
         )
     })
-    let such_as = false;
-    cardData.definitions.map((def_record, def_idx) => {
-        let definition = def_record.sense_definition
-        let letter = def_record.letter
-        if (!letter && !definition.endsWith('such as')) {
-            such_as = false
-        } else if (definition.endsWith('such as')) {
-            such_as = true
-        }
-        const tags = []
-        def_record.tags.map((tag, tag_idx) => {
-            tags.push(<span key={tag_idx} className="badge rounded-pill text-bg-secondary ms-1">{tag}</span>)
-        })
-        if (def_record.linked_word) {
-            let linked_word = def_record.linked_word;
-            let linked_group = def_record.linked_group
-            let idx = definition.indexOf(linked_group)
-            const part_1 = definition.substring(0, idx)
-            const part_3 = definition.substring(idx + linked_group.length)
-            definitions.push(
-                <li key={def_idx} className={letter ? such_as && letter ? 'has_letter list-unstyled' : 'has_letter' : ''}>
-                    {letter && such_as ? <strong>{letter})</strong> : ''}{part_1}<a target="_blank" href={linked_word}>{linked_group}</a>{part_3}
-                    {tags}
-                </li>
-            )
-        } else {
-            definitions.push(
-                <li key={def_idx} className={letter ? such_as && letter ? 'has_letter list-unstyled' : 'has_letter' : ''}>
-                    {letter && such_as? <strong>{letter})</strong> : ''} { definition }
-                    {tags}
-                </li>
-            )
-        }
-    })
+    const definitions = composeDefinitions(cardData.definitions)
+    
     cardData.etymologies.map((eti_record, eti_idx) => {
         eties.push(
             <div key={eti_idx}>

@@ -1,7 +1,9 @@
 import { ABC_asc, ABC_desc } from "./vars";
 import { Card, word_count_element, fetch_definition, auto_search } from "./components/card.js"
+import { Quiz } from "./components/quiz.js";
 import React from 'react';
 import ReactDOM from 'react-dom'
+
 
 // const db_data = initial_table_data;
 const search_field = document.querySelector("#search_field");
@@ -30,7 +32,6 @@ document.querySelector('#book_select').addEventListener('click', (e) => {
 
 
 function DataTable( {books} ) {
-    console.log('table rendering')
 
     const [bigData, setBigData] = React.useState(db_data.words)
     const [book_names, setBooks] = React.useState(books);
@@ -131,7 +132,6 @@ function DataTable( {books} ) {
             }
         }
         db_data.words[word] = word_data
-        console.log('received_definition trigger')
         setBigData(structuredClone(db_data.words))
         if (export_modal.style.display !== 'none') {
             count_words_to_export()
@@ -186,8 +186,10 @@ function DataTable( {books} ) {
                              d={JSON.stringify(db_data.words[rec_name])} 
                               />
             }
-            )   
+            ) 
+             
         }
+    <Quiz/>
     </div>
     )
 }
@@ -303,7 +305,6 @@ const count_words_to_export = function() {
 }
 
 const update_modal_progress = function(total, failed, defined) {
-    console.log(defined, failed, total)
     modal_progress_success.querySelector('div').innerHTML = defined
     modal_progress_success.style.width = Math.floor(defined / total * 100) + '%'
     
@@ -334,7 +335,6 @@ export_modal.addEventListener('show.bs.modal', count_words_to_export)
 document.querySelector('#only_defined').addEventListener('change', count_words_to_export)
 document.querySelectorAll('#book_container .form-check').forEach(
     el => {
-        console.log('here')
         el.addEventListener('mouseenter', e => e.target.classList.add('bg-primary-subtle'))
         el.addEventListener('mouseleave', e => e.target.classList.remove('bg-primary-subtle'))
     }

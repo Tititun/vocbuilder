@@ -187,7 +187,7 @@ def get_definitions(records):
             'definitions': [
                  {'sense_key': s.id,
                   'sense_definition': s.definition,
-                  'tags': [t.label for t in s.senselabel_set.all()],
+                  'tags': [t.label for t in s.senselabel_set.exclude(label='see usage paragraph below')],
                   'letter': s.letter}
                   for dr in w.dictrecord_set.all()
                   for df in dr.definition_set.all()
@@ -279,11 +279,11 @@ def get_ranking():
 
 
 if __name__ == '__main__':
-    from django.db import connection
-    records = read_db('static/vocab/vocab.db', num_rows=None)
-    print(records)
-    print(list(get_definitions(records)['words'].items()))
-    print(len(connection.queries))
+    # from django.db import connection
+    # records = read_db('static/vocab/vocab.db', num_rows=None)
+    # print(records)
+    # print(list(get_definitions(records)['words'].items()))
+    # print(len(connection.queries))
 
     # Word.objects.all().annotate(sense_count=Count('dictrecord__definition__sensesequence__sense')).filter(sense_count=0).delete()
     # Word.objects.filter(dictrecord__error_fetching=1).delete()
@@ -300,7 +300,4 @@ if __name__ == '__main__':
     #                     words_to_del.add(w.id)
     #                     print(w.stem)
     # print(words_to_del)
-    # Word.objects.filter(id__in=words_to_del).delete()
-        # print(w.stem)
-
-
+    Word.objects.filter(stem='oriental').delete()
