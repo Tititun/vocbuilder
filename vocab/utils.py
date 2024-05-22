@@ -176,7 +176,6 @@ def create_vocab_objects(word, dict_record) -> bool:
 
 def get_definitions(records):
     data = {}
-    defined_words_count = 0
     failed_count = 0
     words = defaultdict(lambda: {
             'usages': [],
@@ -244,11 +243,8 @@ def get_definitions(records):
                 'authors': authors
             }
         })
-        if stem not in seen:
-            books_count[title] += 1
+        books_count[title] += 1
         words[stem]['definitions'] = word_definitions.get(stem, {}).get('definitions', [])
-        if words[stem]['definitions']:
-            defined_words_count += 1
         words[stem]['pron'] = word_definitions.get(stem, {}).get('pron', None)
         words[stem]['etymologies'] = word_definitions.get(stem, {}).get('etymologies', [])
         words[stem]['examples'] = word_definitions.get(stem, {}).get('examples', [])
@@ -266,7 +262,8 @@ def get_definitions(records):
     data['book_authors'] = sorted(list(book_authors), key=lambda x: x.lower())
     data['books_count'] = books_count
     data['words_count'] = len(words)
-    data['defined_words_count'] = defined_words_count
+    data['defined_words_count'] = sum(
+        [1 if words[w]['definitions'] else 0 for w in words])
     data['failed_count'] = failed_count
     return data
 
@@ -300,4 +297,4 @@ if __name__ == '__main__':
     #                     words_to_del.add(w.id)
     #                     print(w.stem)
     # print(words_to_del)
-    Word.objects.filter(stem='oriental').delete()
+    Word.objects.filter(stem='Oriental').delete()
