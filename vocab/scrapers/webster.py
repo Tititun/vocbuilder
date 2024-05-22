@@ -48,6 +48,8 @@ def scrape_webster(word: str) -> Optional[dict]:
 
     dict_entries = soup.select('div[id^=dictionary-entry-]')
     logger.info(f'found {len(dict_entries)} dict entries')
+    if not dict_entries:
+        dict_entries = soup.select('.entry-word-section-container')
     data['entries'] = []
     for idx, entry in enumerate(dict_entries):
         logger.info(f'parsing entry №{idx}')
@@ -68,13 +70,15 @@ def scrape_webster(word: str) -> Optional[dict]:
 
         ssqs = entry.select('.vg')
         if not ssqs:
+            logger.info('adding .cxl-ref sense')
             sense_definition = entry.select_one('.cxl-ref')
             ssq_record = {
                     'role': None,
                     'senses': [{'definition': sense_definition.text,
                                 'examples': [],
                                 'labels': [],
-                                'usage_notes': []
+                                'usage_notes': [],
+                                'letter': None,
                                 }]
             }
             entry_record['sense_sequences'].append(ssq_record)
