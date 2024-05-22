@@ -1,10 +1,9 @@
 import { ABC_asc, ABC_desc } from "./vars";
-import { Card, word_count_element, fetch_definition } from "./components/card.js"
+import { Card, fetch_definition } from "./components/card.js"
 import { Quiz } from "./components/quiz.js";
 import { Download } from "./components/download.js";
 import React from 'react';
 import ReactDOM from 'react-dom'
-
 
 const auto_search = document.querySelector("#auto_search");
 const search_field = document.querySelector("#search_field");
@@ -57,17 +56,6 @@ function DataTable( {books} ) {
     }
     }, [])
 
-    React.useEffect(() => {     // search and book filer setup
-        const no_results = document.querySelector('#no_results');
-        const displayed = document.querySelectorAll('.word_card_container:not(.hide)')
-        if (!displayed.length) {
-            no_results.style.display = 'block'
-        } else {
-            no_results.style.display = 'none'
-        }
-        word_count_element.innerHTML = displayed.length
-    }, [search, book_names])
-
     const wordSortCallback = (e) => {
         let button = e.target;
         let order = button.dataset.order;
@@ -100,7 +88,6 @@ function DataTable( {books} ) {
                 counter += db_data.books_count[book_name]
             }
         }
-        word_count_element.innerHTML = counter
         setBooks(new_books)
     }
 
@@ -163,8 +150,7 @@ function DataTable( {books} ) {
     const unique_books = new Set();
     return (
     <div className="container">
-        {
-            keys.map((rec_name) => {
+        {   keys.map((rec_name) => {
                 let to_show = search !== '' ? rec_name.search('^' + search, 'i') !== -1 : true
                 if (to_show) {
                     const usage_books = []
@@ -190,14 +176,17 @@ function DataTable( {books} ) {
                     }
                 }
                 return <Card key={db_data.words[rec_name]['word_id']} rec_name={rec_name} to_show={to_show}
-                             d={JSON.stringify(db_data.words[rec_name])} />
+                             setBigData={setBigData} d={JSON.stringify(db_data.words[rec_name])} />
             }
             ) 
              
         }
-    <Quiz/>
-    <Download unique_books={unique_books} all_books={book_names} show_count={show_count} show_defined_count={show_defined_count} failed_count={failed_count} />    
-    </div>
+        {!show_count ? <div id="no_results" class="text-center"><h3>No words matching selected filters</h3></div> :null}
+        <Quiz/>
+        <Download unique_books={unique_books} all_books={book_names} show_count={show_count} show_defined_count={show_defined_count} failed_count={failed_count} />    
+        {ReactDOM.createPortal(<span>{show_count}</span>,
+                            document.querySelector('#word_count_holder'))}
+        </div>
     )
 }
 

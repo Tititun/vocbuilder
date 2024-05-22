@@ -32,7 +32,7 @@ export const Question = function({word}) {
     
 
     return (<>
-            <div id={`question_${db_data.words[word]['word_id']}`}  key={db_data.words[word]['word_id']} className="card ms-2 shadow col-4">
+            <div id={`question_${db_data.words[word]['word_id']}`}  key={db_data.words[word]['word_id']} className="card w-md-100 ms-2 shadow">
                 <div className="card-body  d-flex flex-column">
                     <h5 className="card-title"></h5>
                     <button onClick={() => setShow(true)} type="button" className="btn btn-link ms-auto" data-bs-container="body">

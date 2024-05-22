@@ -31,7 +31,7 @@ export const Quiz = function() {
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
                      onClick={closeModal}></button>
                 </div>
-                <div className="modal-body d-flex justify-content-center p-4">
+                <div className="modal-body d-flex flex-lg-row flex-md-column container-fluid justify-content-center p-4">
                     {words.map((word, idx) => {
                         return <Question key={db_data.words[word]['word_id']} word={word} />
                             }
