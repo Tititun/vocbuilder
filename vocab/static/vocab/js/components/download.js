@@ -1,19 +1,9 @@
 import React from "react"
 
-// modal_summary.innerHTML = `<p>Download ${only_defined ? defined :cards.length} words for ${unique_books.size} books</p>`
 
-// const update_modal_progress = function(total, failed, defined) {
-//     modal_progress_success.querySelector('div').innerHTML = defined
-//     modal_progress_success.style.width = Math.floor(defined / total * 100) + '%'
-    
-//     modal_progress_failed.querySelector('div').innerHTML = failed
-//     modal_progress_failed.style.width = Math.ceil(failed / total * 100) + '%'
-//     modal_progress_bar_tooltip.setContent({'.tooltip-inner': `${defined} defined, ${failed} failed out of ${total} words`})
-// }
-
-export const Download = function({book_names, show_count, show_defined_count}) {
+export const Download = function({unique_books, all_books, show_count, show_defined_count, failed_count}) {
     console.log('rendering download')
-    console.log(show_count, show_defined_count)
+    console.log(show_count, show_defined_count, failed_count)
     const [is_only_defined, setIsOnlyDefined] = React.useState(true) 
     const myModal = React.useRef(0)
     const myTooltip = React.useRef(0)
@@ -31,6 +21,9 @@ export const Download = function({book_names, show_count, show_defined_count}) {
         return () => export_button_link.removeEventListener('click', show_modal)
     }, [])
 
+    React.useEffect(() => {
+        myTooltip && myTooltip.current.setContent({'.tooltip-inner': `${show_defined_count} defined, ${failed_count} failed out of ${show_count} words`})
+    }, [show_count, show_defined_count, failed_count])
 
     return (
         <div class="modal fade" id="export_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -44,7 +37,8 @@ export const Download = function({book_names, show_count, show_defined_count}) {
             <div class="modal-body">
                 <div>
                     <p id="form_summary">
-                        {`Download ${is_only_defined? show_defined_count : show_count} words for ${book_names.size} books`}
+                        {`Download ${is_only_defined? show_defined_count : show_count} 
+                         words for ${is_only_defined? unique_books.size : all_books.length} books`}
                     </p>
                 </div>
                 <div>
@@ -60,11 +54,13 @@ export const Download = function({book_names, show_count, show_defined_count}) {
                     </form>
                 </div>
                 <div id="modal_progress" class="progress-stacked mt-3" data-bs-toggle="tooltip" data-bs-title="progress">
-                    <div class="progress" role="progressbar" id="modal_progress_success" style={{width: '50%'}}>
-                    <div class="progress-bar bg-success"></div>
+                    <div class="progress" role="progressbar" id="modal_progress_success"
+                     style={{width: `${Math.floor(show_defined_count / show_count * 100)}%`}}>
+                    <div class="progress-bar bg-success">{show_defined_count}</div>
                     </div>
-                    <div class="progress ms-auto" role="progressbar" id="modal_progress_failed" style={{width: '50%'}}>
-                    <div class="progress-bar bg-danger"></div>
+                    <div class="progress ms-auto" role="progressbar" id="modal_progress_failed"
+                     style={{width: `${Math.ceil(failed_count / show_count * 100)}%`}}>
+                    <div class="progress-bar bg-danger">{failed_count}</div>
                     </div>
                 </div>
             </div>

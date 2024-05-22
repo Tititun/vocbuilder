@@ -160,6 +160,7 @@ function DataTable( {books} ) {
     }
     let show_count = 0;
     let show_defined_count = 0;
+    let failed_count = 0;
     const unique_books = new Set();
     return (
     <div className="container">
@@ -181,6 +182,9 @@ function DataTable( {books} ) {
                     }
                     if (to_show) {
                             show_count++
+                            if (db_data.words[rec_name].failed) {
+                                failed_count++
+                            }
                             if (db_data.words[rec_name].definitions.length) {
                                 show_defined_count++
                         }
@@ -194,7 +198,7 @@ function DataTable( {books} ) {
              
         }
     <Quiz/>
-    <Download book_names={unique_books} show_count={show_count} show_defined_count={show_defined_count}/>    
+    <Download unique_books={unique_books} all_books={book_names} show_count={show_count} show_defined_count={show_defined_count} failed_count={failed_count} />    
     </div>
     )
 }
@@ -250,58 +254,6 @@ function arrayToTsv(data){
     ).join('\r\n');  // rows starting on new lines
   }
 
-
-const count_words_to_export = function() {
-    let only_defined;
-    if (!document.querySelector('#only_defined').checked) {
-        only_defined = false
-    } else {
-        only_defined = true;
-    }
-    let query = `.word_card_container:not(.hide)`
-    let cards = document.querySelectorAll(query)
-
-    const unique_books = new Set();
-    let defined = 0
-    let failed = 0
-    for (const card of cards) {
-        if (!only_defined) {
-            unique_books.add(card.querySelector('.book_title').textContent)
-        }
-        if (card.dataset.defined == 'true') {
-            if (only_defined) {
-                unique_books.add(card.querySelector('.book_title').textContent)
-            }
-            defined += 1
-        } else if (card.classList.contains('failed')) {
-            failed += 1
-        }
-        
-    }
-
-    query = `.word_card_container${only_defined ? '[data-defined="true"]:not(.failed)' : ''}:not(.hide)`
-    
-    cards = document.querySelectorAll(query)
-    const tsv_data_total = []
-    for (const card of cards) {
-        const tsv_data = [];
-        const card_data = db_data['words'][card.dataset.word]
-        if (!card_data) continue;
-        tsv_data.push(card.dataset.word)
-        tsv_data.push(card_data['pron'])
-
-        tsv_data_total.push(tsv_data)
-    }
-    const content = arrayToTsv(tsv_data_total)
-    const blob = new Blob([content], {type: 'text/csv;charset=utf-8'})
-    const url = URL.createObjectURL(blob);
-
-    // const a = document.createElement("a");
-    // console.log(url)
-    // a.href = url;
-    // a.download = 'vocab.tsv'
-    // a.click()
-}
 
 // download_button.addEventListener('click', () => {
 //     const only_defined = document.querySelector('#only_defined').checked;
