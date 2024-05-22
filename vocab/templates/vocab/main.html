@@ -18,10 +18,10 @@ Kindle Vocab
             {% csrf_token %}
         </form>
         <div id="example_image_container" class="d-flex flex-column justify-content-center align-items-center">
-            <img id="example_image" src="{% static 'vocab/images/sqlite.svg' %}" draggable="true" class="img-fluid">
+            <img id="example_image" src="{% static 'vocab/images/sqlite.svg' %}" class="img-fluid">
             <div>
                 <p class="mb-0 p-0">Want to see how it looks?</p>
-                <p class="p-0">Drag this
+                <p class="p-0">Click on this
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16">
                       <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5"/>
                     </svg> example database.</p>
@@ -37,8 +37,8 @@ Kindle Vocab
         {% endfor %}
         </ul>
     </div>
+    </div>
 </div>
-
 {% endblock %}
 
 {% block js %}
@@ -46,8 +46,10 @@ Kindle Vocab
 <script src="{% static 'vocab/js/js.cookie.min.js' %}"></script>
 <script>
     var post_main_url = '{% url "vocab:index" %}'
-    document.querySelector('#example_image').addEventListener('mouseenter', e => e.target.classList.add('big'))
-    document.querySelector('#example_image').addEventListener('mouseleave', e => e.target.classList.remove('big'))
+    document.querySelector('#example_image').addEventListener('click', (e) => {
+        e.target.classList.add('big')
+        document.querySelector('#dropzone-main').submit()
+    })
 </script>
 <script src="{% static 'vocab/js/dropbox-main.js' %}"></script>
 {% endblock %}
