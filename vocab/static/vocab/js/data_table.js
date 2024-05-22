@@ -10,7 +10,6 @@ const auto_search = document.querySelector("#auto_search");
 const search_field = document.querySelector("#search_field");
 const defined_word_count = document.querySelector('#defined_words_count')
 const failed_word_count = document.querySelector('#failed_words_count')
-const download_button = document.querySelector('#dowload_button')
 
 document.querySelector('#book_clear').addEventListener('click', (e) => {
     document.querySelectorAll('.book_check').forEach(el => {
@@ -191,8 +190,7 @@ function DataTable( {books} ) {
                     }
                 }
                 return <Card key={db_data.words[rec_name]['word_id']} rec_name={rec_name} to_show={to_show}
-                             d={JSON.stringify(db_data.words[rec_name])} 
-                              />
+                             d={JSON.stringify(db_data.words[rec_name])} />
             }
             ) 
              
@@ -243,36 +241,6 @@ window.addEventListener('unload', function(event) {
   });
 
 
-
-function arrayToTsv(data){
-    return data.map(row =>
-      row
-      .map(String)  // convert every value to String
-      .map(v => v.replaceAll('"', '""'))  // escape double quotes
-      .map(v => `"${v}"`)  // quote it
-      .join('\t')  // tab-separated
-    ).join('\r\n');  // rows starting on new lines
-  }
-
-
-// download_button.addEventListener('click', () => {
-//     const only_defined = document.querySelector('#only_defined').checked;
-//     const query = `.word_card_container${only_defined ? '[data-defined="true"]:not(.failed)' : ''}:not(.hide)`
-//     const cards = document.querySelectorAll(query)
-//     console.log(cards)
-//     const csv_data_total = []
-//     for (const card of cards) {
-//         const csv_data = [];
-//         const card_data = db_data['words'][card.dataset.word]
-//         if (!card_data) continue;
-//         csv_data.push(card.dataset.word)
-//         csv_data.push(card_data['pron'])
-
-//     }
-//     console.log(csv_data_total)
-// })
-
-
 document.querySelectorAll('#book_container .form-check').forEach(
     el => {
         el.addEventListener('mouseenter', e => e.target.classList.add('bg-primary-subtle'))
@@ -303,4 +271,3 @@ document.querySelector('#failed_popover').addEventListener('show.bs.popover', ()
         '.popover-body': content}
     )
 })
-

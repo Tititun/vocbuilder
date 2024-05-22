@@ -83,7 +83,7 @@ export const Question = function({word}) {
                         </strong>
                         {usage_end}
                     </p>
-                    <p className="blockquote-footer">{use_record.current.book.title}</p>
+                    <p className="blockquote-footer mt-0">{use_record.current.book.title}</p>
                     <div className="mt-auto d-flex">
                         <button type="button" className="btn btn-link" onClick={() => {
                             setFirstLetter(ctx.slice(0, 1))
