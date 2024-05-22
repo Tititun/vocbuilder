@@ -3,6 +3,7 @@ import React from "react";
 export const composeDefinitions = function(definitions, with_tags=true) {
     const result = []
     let such_as = false;
+    let last_letter;
     definitions.map((def_record, def_idx) => {
         let definition = def_record.sense_definition
         let letter = def_record.letter
@@ -10,6 +11,12 @@ export const composeDefinitions = function(definitions, with_tags=true) {
             such_as = false
         } else if (definition.endsWith('such as')) {
             such_as = true
+            last_letter = 'a'
+        }
+        if (letter && such_as && last_letter > letter) {
+            such_as = false
+        } else {
+            last_letter = letter
         }
         const tags = []
         if (with_tags) {
