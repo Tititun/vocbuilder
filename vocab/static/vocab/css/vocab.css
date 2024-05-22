@@ -173,3 +173,9 @@
 #example_image.big {
     transform: scale(1.25);
 }
+
+.word_card .btn-outline-danger:hover {
+    background-color: transparent;
+    transition: all 200ms 0ms ease-in-out;
+    transform: scale(1.1)
+}
