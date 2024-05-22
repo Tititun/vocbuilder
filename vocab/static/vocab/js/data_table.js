@@ -1,6 +1,7 @@
 import { ABC_asc, ABC_desc } from "./vars";
 import { Card, word_count_element, fetch_definition } from "./components/card.js"
 import { Quiz } from "./components/quiz.js";
+import { Download } from "./components/download.js";
 import React from 'react';
 import ReactDOM from 'react-dom'
 
@@ -10,11 +11,6 @@ const search_field = document.querySelector("#search_field");
 const defined_word_count = document.querySelector('#defined_words_count')
 const failed_word_count = document.querySelector('#failed_words_count')
 const download_button = document.querySelector('#dowload_button')
-const modal_progress_success = document.querySelector('#modal_progress_success')
-const modal_progress_failed = document.querySelector('#modal_progress_failed')
-
-const modal_progress_bar = document.querySelector('#modal_progress')
-const modal_progress_bar_tooltip = new bootstrap.Tooltip(modal_progress_bar)
 
 document.querySelector('#book_clear').addEventListener('click', (e) => {
     document.querySelectorAll('.book_check').forEach(el => {
@@ -49,9 +45,7 @@ function DataTable( {books} ) {
         
         defined_word_count.innerHTML = db_data.defined_words_count;
         failed_word_count.innerHTML = db_data.failed_count;
-        if (export_modal.style.display !== 'none') {
-            count_words_to_export()
-        }
+
         document.querySelector('#words_count').innerHTML = db_data.words_count
         document.querySelectorAll('.progress_counter').forEach(el => el.style.visibility = 'visible')
 
@@ -134,9 +128,7 @@ function DataTable( {books} ) {
         }
         db_data.words[word] = word_data
         setBigData(structuredClone(db_data.words))
-        if (export_modal.style.display !== 'none') {
-            count_words_to_export()
-        }
+
         if (!e.details['loading']) 
             {
                 const loading_msg = `${e.details.failed ? "failed" : "loaded"} <a href="#anchor_${e.details.word_id}">${e.details.word}</a>`
@@ -166,7 +158,9 @@ function DataTable( {books} ) {
         default:
             keys = Object.keys(db_data.words)
     }
-
+    let show_count = 0;
+    let show_defined_count = 0;
+    const unique_books = new Set();
     return (
     <div className="container">
         {
@@ -177,10 +171,19 @@ function DataTable( {books} ) {
                     for (let us of db_data.words[rec_name].usages) {
                         if (book_names.includes(us.book.title)) {
                             usage_books.push(us.book.title)
+                            if (db_data.words[rec_name].definitions.length) {
+                                unique_books.add(us.book.title)
+                            }
                         }
                     }
                     if (!usage_books.length) {
                         to_show = false
+                    }
+                    if (to_show) {
+                            show_count++
+                            if (db_data.words[rec_name].definitions.length) {
+                                show_defined_count++
+                        }
                     }
                 }
                 return <Card key={db_data.words[rec_name]['word_id']} rec_name={rec_name} to_show={to_show}
@@ -191,12 +194,13 @@ function DataTable( {books} ) {
              
         }
     <Quiz/>
+    <Download book_names={unique_books} show_count={show_count} show_defined_count={show_defined_count}/>    
     </div>
     )
 }
 
 
-ReactDOM.render(
+ReactDOM.render(    
     <DataTable books={db_data.books} />,
     document.getElementById("root")
 );
@@ -204,7 +208,6 @@ ReactDOM.render(
 
 const mybutton = document.getElementById("btn-back-to-top");
 const search_form = document.querySelector("#search");
-const export_modal = document.querySelector("#export_modal");
 
 
 mybutton.addEventListener('click', () => {
@@ -256,7 +259,6 @@ const count_words_to_export = function() {
         only_defined = true;
     }
     let query = `.word_card_container:not(.hide)`
-    const modal_summary = document.querySelector('#form_summary')
     let cards = document.querySelectorAll(query)
 
     const unique_books = new Set();
@@ -276,10 +278,6 @@ const count_words_to_export = function() {
         }
         
     }
-
-    update_modal_progress(cards.length, failed, defined)
-
-    modal_summary.innerHTML = `<p>Download ${only_defined ? defined :cards.length} words for ${unique_books.size} books</p>`
 
     query = `.word_card_container${only_defined ? '[data-defined="true"]:not(.failed)' : ''}:not(.hide)`
     
@@ -305,17 +303,6 @@ const count_words_to_export = function() {
     // a.click()
 }
 
-const update_modal_progress = function(total, failed, defined) {
-    modal_progress_success.querySelector('div').innerHTML = defined
-    modal_progress_success.style.width = Math.floor(defined / total * 100) + '%'
-    
-    modal_progress_failed.querySelector('div').innerHTML = failed
-    modal_progress_failed.style.width = Math.ceil(failed / total * 100) + '%'
-    modal_progress_bar_tooltip.setContent({'.tooltip-inner': `${defined} defined, ${failed} failed out of ${total} words`})
-}
-
-export_modal.addEventListener('show.bs.modal', count_words_to_export)
-
 // download_button.addEventListener('click', () => {
 //     const only_defined = document.querySelector('#only_defined').checked;
 //     const query = `.word_card_container${only_defined ? '[data-defined="true"]:not(.failed)' : ''}:not(.hide)`
@@ -333,7 +320,7 @@ export_modal.addEventListener('show.bs.modal', count_words_to_export)
 //     console.log(csv_data_total)
 // })
 
-document.querySelector('#only_defined').addEventListener('change', count_words_to_export)
+
 document.querySelectorAll('#book_container .form-check').forEach(
     el => {
         el.addEventListener('mouseenter', e => e.target.classList.add('bg-primary-subtle'))
