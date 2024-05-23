@@ -88,7 +88,7 @@ export const Question = function({word}) {
                     <p className="blockquote-footer mt-0">{use_record.current.book.title}</p>
                     <div className="mt-auto d-flex">
                         <button type="button" className="btn btn-link" 
-                        disabled={firstLetter ? true : false}
+                        disabled={firstLetter ? true : show ? true : false}
                         onClick={() => {
                             setFirstLetter(ctx.slice(0, 1))
                             setInputValue('')
