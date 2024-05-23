@@ -20,6 +20,7 @@
     background-color: #FAF9F6;
     margin: 1em;
     padding: 1em;
+    width: 48%;
 }
 
 .word_card_button {
@@ -183,9 +184,41 @@
     width: 33%;
 }
 
+.bi-eye {
+    transition: all 150ms 0ms ease-in-out;
+}
+
+.bi-eye:hover {
+    transform: scale(1.25);
+}
+
+.mid_col {
+    width: 72%
+}
+
+.right_col {
+    width: 10%
+}
+
+.card-text input {
+    transition: background 0.5s ease-in-out;
+}
+
 @media (width <= 1000px) {
     #quiz_modal .card {
         width: 100%;
         margin-bottom: 1.5rem;
+    }
+    .word_card {
+        width: 99%;
+    }
+    .mid_col {
+        width: 65%
+    }
+    .right_col {
+        width: 16%
+    }
+    .hide_on_shrink {
+        display: none;
     }
 }

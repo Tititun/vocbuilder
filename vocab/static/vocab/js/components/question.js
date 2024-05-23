@@ -10,6 +10,7 @@ export const Question = function({word}) {
     const [success, setSuccess] = React.useState(false)
     const [show, setShow] = React.useState(false)
     const [firstLetter, setFirstLetter] = React.useState('')
+    const input_field = React.useRef(null)
     const use_record = React.useRef(_.sample(db_data.words[word].usages))
     
     let context = use_record.current.context;
@@ -53,6 +54,7 @@ export const Question = function({word}) {
                                 <span className='bg-warning-subtle rounded'>{ctx}</span>
                             :
                             <input 
+                                ref={input_field}
                                 onInput={(e) => {
                                     let value = e.target.value
                                     if (value.length > ctx.length){
@@ -85,10 +87,18 @@ export const Question = function({word}) {
                     </p>
                     <p className="blockquote-footer mt-0">{use_record.current.book.title}</p>
                     <div className="mt-auto d-flex">
-                        <button type="button" className="btn btn-link" onClick={() => {
+                        <button type="button" className="btn btn-link" 
+                        disabled={firstLetter ? true : false}
+                        onClick={() => {
                             setFirstLetter(ctx.slice(0, 1))
                             setInputValue('')
-                        }}>First letter?</button>
+                            input_field.current.classList.remove('bg-info-subtle')
+                            input_field.current.classList.add('bg-success-subtle')
+                            setTimeout(() => input_field.current.classList.add('bg-info-subtle'), 500)
+                            setTimeout(() => input_field.current.classList.remove('bg-success-subtle'), 500)
+                        }}>
+                            First letter?
+                        </button>
                         <button type="button" className="btn btn-link ms-auto" data-bs-container="body"
                         data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="lol">
                              Show definition

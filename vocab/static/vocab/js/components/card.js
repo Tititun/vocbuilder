@@ -48,6 +48,7 @@ const exCollapse = function (e) {
 
 export const Card = React.memo(function ({rec_name, to_show, setBigData, d}) {
     console.log('rendering card')
+    const parentRef = React.useRef(null)
     const cardData = db_data.words[rec_name]
     const rec_idx = cardData["word_id"]
 
@@ -96,20 +97,26 @@ export const Card = React.memo(function ({rec_name, to_show, setBigData, d}) {
     })
 
     return (
-        <div key={rec_idx} id={`cards_${rec_idx}`} className={`word_card_container flex-md-column flex-lg-row d-flex ${to_show ? '' : 'hide'} ${cardData['failed'] ? 'failed' : ''}`}
+        <div key={rec_idx} id={`cards_${rec_idx}`} ref={parentRef} className={`word_card_container mx-0 flex-md-column flex-lg-row d-flex ${to_show ? '' : 'hide'} ${cardData['failed'] ? 'failed' : ''}`}
                 data-word_id={rec_idx} data-word={rec_name} data-defined={definitions.length ? "true" : "false"}
                 // onClick={() => setCardData(db_data['words'][rec_name])}
                 >
             <span id={`anchor_${rec_idx}`} className="anchor"></span>
-            <div key={1} className="word_card shadow col-md-12 col-lg-6 border rounded-2">
+            <div key={1} className="word_card shadow border rounded-2">
                 <div className="d-flex justify-content-center">
                     <div className="d-flex flex-column ms-auto">
                         <h3 className = "text-center" key="name">{rec_name}</h3>
                         <em><p className = "text-center" key="pronunciation">{cardData['pron']}</p></em>
                     </div>
                     <button
-                        onClick={() => {console.log('deleting', rec_name); delete db_data.words[rec_name];
-                                        setBigData(JSON.parse(JSON.stringify(db_data.words)))}}
+                        onClick={() => {
+                             delete db_data.words[rec_name];
+                            //  const toastLiveExample = document.getElementById('liveToast')
+                            //  const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample)
+                            //  toastBootstrap.show()
+                             parentRef.current.classList.add('bg-danger-subtle')   
+                             setTimeout(() => setBigData(JSON.parse(JSON.stringify(db_data.words))), 150)
+                            }}
                         className="btn btn-outline-danger border-0  ms-auto align-self-start" type="button">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#dc3545" className="bi bi-trash3 overflow-visible" viewBox="0 0 16 16">
                             <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
@@ -122,11 +129,11 @@ export const Card = React.memo(function ({rec_name, to_show, setBigData, d}) {
             </div>
             { cardData['loading']
                 ?
-                <div key={2} className="word_card shadow col-md-12 col-lg-6 flex-grow-0 border rounded-2 d-flex align-items-center">
+                <div key={2} className="word_card shadow flex-grow-0 border rounded-2 d-flex align-items-center">
                     <div className="d-flex justify-content-center container-fluid"><div className="spinner-border" role="status"></div></div>
                 </div> 
                 :
-                <div key={2} className="word_card shadow col-md-12 col-lg-6 flex-grow-0 border rounded-2 d-flex flex-column justify-content-center">
+                <div key={2} className="word_card shadow flex-grow-0 border rounded-2 d-flex flex-column justify-content-center">
                         
                     
                         {cardData['failed'] ?
