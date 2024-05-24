@@ -283,7 +283,16 @@
     .nav-item {
         margin-left: 2px;
         margin-right: 2px;
-        border
     }
 }
 
+.about_image {
+    width: 65%;
+    margin-bottom: 2em;
+}
+
+
+#footer {
+  width: 100%;
+  min-height: 80px;
+}
