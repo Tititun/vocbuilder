@@ -1,3 +1,15 @@
 .idea
+media
+ml
+node_modules
+/static
+ssl
 venv
+__pycache__
+.env_prod
+.gitignore
+bundle.js
+playground.py
+settings.json
 vocbuilder/my.cnf
+vocbuilder/my_local.cnf

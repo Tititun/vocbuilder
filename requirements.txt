@@ -5,3 +5,5 @@ flower
 graphene-django==3.2.1
 pymysql==1.1.0
 requests
+cryptography
+uwsgi

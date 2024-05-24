@@ -1,0 +1,32 @@
+name: voc
+
+services:
+  db:
+    image: mysql
+    restart: always
+    volumes:
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    env_file:
+      - .env_prod
+  web:
+    image: web_app:3.0
+    build:
+      dockerfile: Dockerfile
+    command: ["./wait-for-it.sh", "db:3306", "--",
+              "uwsgi", "--ini", "/app/config/uwsgi/uwsgi.ini"]
+    restart: always
+    volumes:
+      - .:/app
+    environment:
+      - DJANGO_SETTINGS_MODULE=vocbuilder.settings.prod
+    depends_on:
+      - db
+  nginx:
+    image: nginx
+    restart: always
+    volumes:
+      - ./config/nginx:/etc/nginx/templates
+      - .:/app
+    ports:
+      - "80:80"
+      - "443:443"
