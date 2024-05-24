@@ -17,7 +17,7 @@ class FeedbackForm(forms.ModelForm):
         widgets = {
              'email': forms.EmailInput(attrs={
                      'class': "form-control",
-                     'placeholder': 'if you want an answer, you may type in your email'
+                     'placeholder': 'if you want an answer, you may provide your email'
              }),
              'feedback': forms.Textarea(attrs={
                  'class': "form-control",
