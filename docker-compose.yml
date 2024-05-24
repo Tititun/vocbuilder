@@ -4,6 +4,7 @@ services:
   db:
     image: mysql
     restart: always
+    command: --log_error_verbosity=1  # errors only
     volumes:
       - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
     env_file:
