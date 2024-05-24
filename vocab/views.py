@@ -12,11 +12,12 @@ from django.conf import settings
 from django.shortcuts import redirect, render
 import requests
 
-load_dotenv(os.path.join(Path(__file__).parent.parent, '.env_telegram'))
-
 from .forms import FeedbackForm
 from .utils import (is_sqlite, read_db, commit_to_db, create_vocab_objects,
                     get_definitions, get_ranking)
+
+load_dotenv(os.path.join(Path(__file__).parent.parent, '.env_telegram'))
+
 
 logger = logging.getLogger('IMAGE_SCRAPER')
 logging.basicConfig(encoding='utf-8', level=logging.INFO)
@@ -37,7 +38,9 @@ def index(request: HttpRequest):
             name = 'vocab'
             file_path = os.path.abspath('vocab/static/vocab/vocab.db')
         s = time.time()
-        data = read_db(file_path, num_rows=None)
+        data = read_db(file_path,
+                       num_rows=300 if name == 'vocab' else None,
+                       rand=True if name == 'vocab' else False)
         logger.info(f'READ DB in {time.time() - s}s')
         s = time.time()
         data = get_definitions(data)
@@ -120,3 +123,7 @@ def contact(request):
             return render(request, 'vocab/feedback_success.html')
     return render(request, 'vocab/contact.html', {'form': form,
                                                   'hide_nav': True})
+
+
+def about(request):
+    return render(request, 'vocab/about.html', {'hide_nav': True})

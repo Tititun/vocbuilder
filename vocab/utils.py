@@ -42,13 +42,12 @@ def is_sqlite(file):
         return
 
 
-def read_db(path: str, num_rows: int = None, word: str = None) \
-        -> List[List[Tuple[str]]]:
+def read_db(path: str, num_rows: int = None,
+            word: str = None, rand: bool = False) -> List[List[Tuple[str]]]:
     """
     read the sqlite3 database and return a list of tuples with values:
     stem, title, authors, word, usage
     """
-    print(path)
     context = {}
     conn = sqlite3.connect(path)
     cursor = conn.cursor()
@@ -64,7 +63,10 @@ def read_db(path: str, num_rows: int = None, word: str = None) \
         statement = '''
         select w.stem, bi.title, bi.authors, w.word, l."usage", ROW_NUMBER() OVER()
         from LOOKUPS l JOIN WORDS w ON l.word_key = w.id 
-        JOIN BOOK_INFO bi ON l.book_key = bi.id WHERE w.lang = 'en';'''
+        JOIN BOOK_INFO bi ON l.book_key = bi.id WHERE w.lang = 'en'
+        '''
+        if rand:
+            statement += ' order by RANDOM()'
     cursor.execute(statement, context)
     result = cursor.fetchall()[:num_rows]
     cursor.close()

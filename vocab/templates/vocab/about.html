@@ -1,0 +1,75 @@
+{% extends 'vocab/base.html' %}
+{% load static %}
+
+{% block title %}
+How it works
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid text-center d-flex">
+    <div class="col-3">
+    </div>
+
+    <div class="col-6 pt-5 mt-5 d-flex flex-column align-items-center">
+        <h3>Welcome to vocab cards!</h3>
+        <p class="fst-italic w-50">Note: we are currently working only with English words.
+            If you are interested in other languages, please send your suggestions <a href="{% url 'vocab:contact' %}">here</a>.</p>
+        <p class="text-start w-75">
+            This website is built to help you extract the words from
+            the Kindle vocabulary builder database. This database is a <strong>vocab.db</strong>
+            file that lies in your kindle and stores all the words that you look up while reading.
+            To find this file, plug your kindle into your computer and go to <em>Kindle/system/vocabulary/</em>
+            path. You will see your database there:
+        </p>
+        <img class="about_image" src="{% static 'vocab/images/db_location.png' %}">
+        <p class="text-start w-75">
+            This is a small sqlite3 database. It has the information about the words you
+            searched for, the book and context this word appeared in. It doesn't have
+            the information about the definition, and that's where we are glad to help you.
+        </p>
+        <p class="text-start w-75">
+            After uploading your database on our <a href="{% url 'vocab:index' %}">main page</a>
+            you will see all your words displayed as cards, which you can sort alphabetically
+            and filter by books. An example of the card:
+        </p>
+        <img class="about_image w-75" src="{% static 'vocab/images/card_example.png' %}">
+        <p class="text-start w-75">
+            Some cards probably will have definitions, which happened to be in
+            our database. If it doesn't have a definition, it will have a button to search for it:
+        </p>
+        <img class="about_image" src="{% static 'vocab/images/card_search.png' %}">
+        <p class="text-start w-75">
+            After clicking on it, a definition will be fetched from <a href="https://www.merriam-webster.com/">Merriam-Webster</a> website.
+            We will store the definition in our database, so the next time you and other users
+            will not have to fetch the definition.
+        </p>
+        <p class="text-start w-75">
+            You can turn on auto-search to look up all the words. The words will be
+            loaded one by one, and it might take some time.
+        </p>
+        <img class="about_image w-25" src="{% static 'vocab/images/auto_search.png' %}">
+        <p class="text-start w-75">
+            We have a quiz where you can try guess words by their context.
+        </p>
+        <img class="about_image" src="{% static 'vocab/images/quiz.png' %}">
+        <p class="text-start w-75">
+            Finally, you can export all the words in tsv or csv format including
+            word definitions, context, pronunciation, etymology. This data could be
+            imported by <a href="https://apps.ankiweb.net/">Anki app</a> - a popular tool
+            for learning languages.
+        </p>
+        <img class="about_image" src="{% static 'vocab/images/download.png' %}">
+        <p class="text-start w-75">
+            We hope that you'll find this website useful. You can leave your feedback
+            and make suggestions <a href="{% url 'vocab:contact' %}">here</a>.
+        </p>
+        <h4 class="text-center mb-5">Happy learning!</h4>
+
+    </div>
+
+    <div class="col-3">
+    </div>
+</div>
+
+{% endblock %}
