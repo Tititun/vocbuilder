@@ -128,15 +128,11 @@
 }
 
 #tools {
-    padding-top: 5em;
+    padding-top: 6em;
 }
 
 #tools label {
     display: inline;
-}
-
-#export_button {
-    margin-bottom: 10px;
 }
 
 .modal-content .btn-close {
@@ -204,6 +200,23 @@
     transition: background 0.5s ease-in-out;
 }
 
+#dropzone-main {
+
+}
+
+.col_main_first {
+    width: 20%
+}
+
+.col_main_second {
+    width: 60%
+}
+
+.col_main_third {
+    width: 20%;
+    padding-top: 50px;
+}
+
 @media (width <= 1000px) {
     #quiz_modal .card {
         width: 100%;
@@ -221,4 +234,56 @@
     .hide_on_shrink {
         display: none;
     }
+    nav {
+        font-size: calc(1.05rem + .9vw)
+    }
+    nav ul {
+        width: 55%;
+    }
+    #search_field {
+        font-size: 1.2rem;
+    }
+    #search {
+        margin-left: 10px;
+    }
+    #dropzone-main {
+        width: 300px;
+        height: 300px;
+    }
+    #example_image {
+       width: 100px;
+        height: 100px;
+    }
+    .col_main_third {
+        width: 100%;
+        padding-left: 25%;
+        padding-right: 25%;
+        font-size: calc(1.0rem + .9vw)
+    }
+    #example_image_container p, .dz-button {
+        font-size: 1.8rem;
+    }
+    #search {
+        width: 300px;
+    }
+    .dz-button {
+        font-size: 1.8rem !important;
+        font-weight: 800 !important;
+    }
+    #export_button {
+        margin-right: 2px !important;
+    }
+    #btn-back-to-top {
+        bottom: 60px;
+        left: 20px;
+    }
+    #tools {
+        height: 92vh !important;
+    }
+    .nav-item {
+        margin-left: 2px;
+        margin-right: 2px;
+        border
+    }
 }
+
