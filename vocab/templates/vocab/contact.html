@@ -10,14 +10,14 @@ Feedback
 
 <div class="container-fluid text-center d-flex">
   <div class="row container-fluid pt-5">
-    <div class="col-2">
+    <div class="col-lg-2 col-md-1">
     </div>
 
-    <div class="col-8 pt-5 d-flex flex-column align-items-center">
+    <div class="col-md-10 col-lg-8 pt-5 d-flex flex-column align-items-center">
       <form action="{% url 'vocab:contact' %}" class="w-50 mt-5" method="post" enctype="multipart/form-data">
             {% csrf_token %}
 
-      <h4>Leave your feedback</h4>
+      <h4>Send your feedback</h4>
 
       {{ form.non_field_errors }}
       <div class="mb-3 d-flex flex-column">
@@ -50,7 +50,7 @@ Feedback
       </form>
     </div>
 
-    <div class="col-2">
+    <div class="col-lg-2 col-md-1">
     </div>
   </div>
 </div>

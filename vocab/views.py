@@ -1,11 +1,20 @@
 import json
 import logging
 import os
+from pathlib import Path
+import time
 import traceback
 import uuid
+
+from dotenv import load_dotenv
 from django.http import HttpRequest, JsonResponse
 from django.conf import settings
 from django.shortcuts import redirect, render
+import requests
+
+load_dotenv(os.path.join(Path(__file__).parent.parent, '.env_telegram'))
+
+from .forms import FeedbackForm
 from .utils import (is_sqlite, read_db, commit_to_db, create_vocab_objects,
                     get_definitions, get_ranking)
 
@@ -27,15 +36,20 @@ def index(request: HttpRequest):
         else:
             name = 'vocab'
             file_path = os.path.abspath('vocab/static/vocab/vocab.db')
+        s = time.time()
         data = read_db(file_path, num_rows=None)
+        logger.info(f'READ DB in {time.time() - s}s')
+        s = time.time()
         data = get_definitions(data)
+        logger.info(f'GOT DEFINITIONS in {time.time() - s}s')
         return render(request, 'vocab/data_table.html', {'data': json.dumps(data),
                                                          'db_name': name,
                                                          'books': data['books'],
                                                          'books_count': data['books_count'],
                                                          'authors': data['book_authors']})
     ranking = get_ranking()
-    return render(request, 'vocab/main.html', {'is_main': True,
+    return render(request, 'vocab/main.html', {'hide_nav': True,
+                                               'is_main': True,
                                                'ranking': ranking})
 
 
@@ -86,3 +100,23 @@ def word_definition(request: HttpRequest):
         data['failed'] = True
     logger.info(f'returning JSON response with data: {data}')
     return JsonResponse(data)
+
+
+def contact(request):
+    form = FeedbackForm()
+    if request.method == 'POST':
+        form = FeedbackForm(request.POST, request.FILES)
+        if form.is_valid():
+            feedback = form.save()
+            try:
+                requests.get(f"https://api.telegram.org/bot"
+                             f"{os.environ['BOT_TOKEN']}"
+                             f"/sendMessage?"
+                             f"chat_id={os.environ['BOT_CHAT_ID']}&"
+                             f"text={feedback.feedback}",
+                             timeout=10)
+            except:
+                pass
+            return render(request, 'vocab/feedback_success.html')
+    return render(request, 'vocab/contact.html', {'form': form,
+                                                  'hide_nav': True})

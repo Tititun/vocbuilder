@@ -6,7 +6,7 @@ node_modules
 ssl
 venv
 __pycache__
-.env_prod
+.env*
 .gitignore
 bundle.js
 playground.py
