@@ -29,12 +29,12 @@
                   <a class="nav-link disabled"  href="#">API</a>
               </li>
               <li class="nav-item">
-                  <a class="nav-link" href="{% url 'vocab:contact' %}}">Contact us</a>
+                  <a class="nav-link" href="{% url 'vocab:contact' %}">Contact us</a>
               </li>
               {% block navlinks %}
               {% endblock %}
           </ul>
-          {% if not is_main %}
+          {% if not is_main and not hide_nav %}
           <form id="search">
               <div class="input_wrapper d-flex">
                   <input id="search_field" class="form-control me-2 flex-d" type="search" placeholder="Search words">

@@ -109,3 +109,10 @@ class Derived(models.Model):
 class Image(models.Model):
     word = models.ForeignKey(Word, on_delete=models.CASCADE)
     src = models.TextField(null=False)
+
+
+class Feedback(models.Model):
+    email = models.EmailField(null=True, blank=True)
+    feedback = models.TextField(null=False)
+    file = models.FileField(null=True, blank=True, upload_to='feedback')
+    created = models.DateTimeField(auto_now_add=True, null=False)

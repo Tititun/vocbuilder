@@ -1,0 +1,57 @@
+{% extends 'vocab/base.html' %}
+{% load static %}
+
+{% block title %}
+Feedback
+{% endblock %}
+
+{% block content %}
+
+
+<div class="container-fluid text-center d-flex">
+  <div class="row container-fluid pt-5">
+    <div class="col-2">
+    </div>
+
+    <div class="col-8 pt-5 d-flex flex-column align-items-center">
+      <form action="{% url 'vocab:contact' %}" class="w-50 mt-5" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+      <h4>Leave your feedback</h4>
+
+      {{ form.non_field_errors }}
+      <div class="mb-3 d-flex flex-column">
+        {{ form.subject.errors }}
+        <label class="form-label me-auto" for="{{ form.email.id_for_label }}">Your email:</label>
+        {{ form.email }}
+      </div>
+
+      <div class="mb-3 d-flex flex-column">
+        {{ form.feedback.errors }}
+        <label class="form-label me-auto"  for="{{ form.feedback.id_for_label }}">Feedback:</label>
+        {{ form.feedback }}
+      </div>
+
+      <div class="mb-3 d-flex flex-column">
+        {% if form.file.errors %}
+            {% for error in form.file.errors %}
+                <p class="bg-danger-subtle"><strong>{{ error|escape }}</strong></p>
+            {% endfor %}
+        {% endif %}
+        <label class="form-label me-auto"  for="{{ form.file.id_for_label }}">Your email:</label>
+        {{ form.file }}
+      </div>
+
+      <div class="mb-3">
+          <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+
+
+      </form>
+    </div>
+
+    <div class="col-2">
+    </div>
+  </div>
+</div>
+{% endblock %}
