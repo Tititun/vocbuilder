@@ -8,6 +8,7 @@ server {
     server_name  www.vocbuilder.com vocbuilder.com;
     return 301 https://$host$request_uri;
 }
+server {
     listen       443 ssl;
     ssl_certificate      /app/ssl/vocab.crt;
     ssl_certificate_key  /app/ssl/vocab.key;

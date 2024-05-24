@@ -1,4 +1,2 @@
 venv
-**/venv
-/venv
-/vocab/static/vocab/js/node_modules
+node_modules
