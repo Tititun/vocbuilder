@@ -1,6 +1,11 @@
 name: voc
 
 services:
+  certbot:
+    image: certbot/certbot:latest
+    volumes:
+      - ./certbot/www/:/var/www/certbot/:rw
+      - ./certbot/conf/:/etc/letsencrypt/:rw
   db:
     image: mysql
     restart: always
@@ -10,7 +15,7 @@ services:
     env_file:
       - .env_prod
   web:
-    image: web_app:3.1
+    image: web_app:3.5
     build:
       dockerfile: Dockerfile
     command: ["./wait-for-it.sh", "db:3306", "--",
@@ -27,6 +32,8 @@ services:
     restart: always
     volumes:
       - ./config/nginx:/etc/nginx/templates
+      - ./certbot/www:/var/www/certbot/:ro
+      - ./certbot/conf/:/etc/nginx/ssl/:ro
       - .:/app
     ports:
       - "80:80"
