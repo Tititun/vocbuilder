@@ -1,4 +1,7 @@
+.gitignore
 .idea
+certbot
+docker-entrypoint*
 media
 ml
 node_modules
