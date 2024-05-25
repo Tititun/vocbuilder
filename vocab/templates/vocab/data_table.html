@@ -13,13 +13,15 @@ Vocabulary Words
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid d-flex">
-    <div class="col-2 pt-5 nav_column">
+<div class="main_body container-fluid d-flex">
+
+    <div class="first_col order-1 pt-5 nav_column">
+
         <div class="d-flex align-items-center flex-column buttons_holder">
             <div class="container-fluid d-flex flex-column align-items-start nav_container">
                 <p class="align-self-center">Total words: <span id="word_count_holder"></span></p>
                 <button id="word_sort" type="button" data-order="ascending" class="btn btn-light panel_button border">Word sort</button>
-                <div class="accordion accordion-flush pb-5">
+                <div class="accordion accordion-flush pb-lg-5 pb-md-1">
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="book_list_acc">
                           <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#book_list_acc_panel">
@@ -52,18 +54,22 @@ Vocabulary Words
                 </div>
         </div>
     </div>
-    <div class="col-8 mid_col pt-5 container-fluid d-flex flex-column">
+
+    <div class="mid_col order-2 pt-5 container-fluid d-flex flex-column">
         <div id="root"></div>
     </div>
-    <div class="col-2 right_col container-fluid flex-column d-flex">
+
+    <div class="right_col order-3 container-fluid flex-column d-flex">
         <div id="tools" class="container-fluid flex-column d-flex sticky-top align-items-end vh-100">
 
-            <div class="form-switch">
+            <div id="switch_container">
+              <div class="form-switch">
               <input class="form-check-input" type="checkbox" role="switch" id="auto_search">
               <label for="auto_search" class="text-nowrap">Auto-search</label>
             </div>
             <div>
                <p id="loading_message"></p>
+            </div>
             </div>
             <p class="progress_counter mt-auto text-end">Defined words: <strong><span id="defined_words_count">0</span>/<span id="words_count"></span></strong></p>
             <p class="progress_counter text-end">
@@ -71,7 +77,7 @@ Vocabulary Words
                  data-bs-container="body" data-bs-toggle="popover" data-bs-placement="left" data-bs-content="Failed"
                  id="failed_popover"
                 >
-                    Failed to define:
+                    Failed:
                 </span>
                 <strong><span id="failed_words_count">0</span></strong></span>
             </p>

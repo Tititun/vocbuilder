@@ -14,7 +14,7 @@ Feedback
     </div>
 
     <div class="col-md-10 col-lg-8 pt-5 d-flex flex-column align-items-center">
-      <form action="{% url 'vocab:contact' %}" class="w-50 mt-5" method="post" enctype="multipart/form-data">
+      <form id="feedback_form"  action="{% url 'vocab:contact' %}" class="w-50 mt-5" method="post" enctype="multipart/form-data">
             {% csrf_token %}
 
       <h4>Send your feedback</h4>

@@ -5,6 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="description" content="Export your kindle vocabulary builder words. Generate word cards for learning. Export words as files." />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{% static 'vocab/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'vocab/css/dropzone.min.css' %}" type="text/css" />
     <link rel="stylesheet" href="{% static 'vocab/css/vocab.css' %}">
@@ -27,7 +28,7 @@
 <div id="main_container" class="vh-100 d-flex flex-column">
 <div class="container-fluid">
     <nav class="shadow-sm navbar navbar-expand-lg navbar-light bg-light fixed-top">
-      <div class="container-fluid d-flex justify-content-center">
+      <div class="nav_holder container-fluid d-flex justify-content-center">
           <ul class="navbar-nav d-flex flex-row justify-content-evenly">
               {% if not is_main %}
               <li class="nav-item">
@@ -47,6 +48,7 @@
               {% endblock %}
           </ul>
           {% if not is_main and not hide_nav %}
+          <div class="nav_section d-flex">
           <form id="search">
               <div class="input_wrapper d-flex">
                   <input id="search_field" class="form-control me-2 flex-d" type="search" placeholder="Search words">
@@ -63,6 +65,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>  <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/></svg>
                 <span class="hide_on_shrink">Download</span>
             </button>
+          </div>
           {% endif %}
       </div>
     </nav>

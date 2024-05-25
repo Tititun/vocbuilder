@@ -260,3 +260,13 @@ document.querySelector('#failed_popover').addEventListener('show.bs.popover', ()
         '.popover-body': content}
     )
 })
+
+if (window.screen.width < 1000) {
+    const collapse_button = document.querySelector('.accordion-button')
+    const collapse_list = document.querySelector('#book_list_acc_panel')
+    if (collapse_button && collapse_list) {
+        console.log(window.screen.width)
+        collapse_button.classList.add('collapsed');
+        collapse_list.classList.remove('show')
+    }
+}

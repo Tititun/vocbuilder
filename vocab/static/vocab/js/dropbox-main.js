@@ -16,12 +16,6 @@ Dropzone.options.dropzoneMain = {
    }
  };
 
-drag_example.addEventListener('dragend', e => {
-    let b = drag_target.getBoundingClientRect(); // boundaries
-    if (e.x >= b.left && e.x <= b.right && e.y >= b.top && e.y <= b.bottom) {
-        drag_target.requestSubmit();
-    }
-});
 
 //function send_db(db, example=false) {
 //    const csrftoken = Cookies.get('csrftoken');
