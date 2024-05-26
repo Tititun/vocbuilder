@@ -21,8 +21,15 @@ from django.urls import include, path
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.views.generic.base import RedirectView
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.sitemaps.views import sitemap
 from graphene_django.views import GraphQLView
 from vocbuilder.schema import schema
+
+from .sitemaps import StaticViewSitemap
+
+sitemaps = {
+    "static": StaticViewSitemap,
+}
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,6 +37,8 @@ urlpatterns = [
     # TODO: handle csrf in GraphQL more gracefully:
     path("graphql", csrf_exempt(GraphQLView.as_view(graphiql=True,
                                                     schema=schema))),
+    path('sitemap.xml', sitemap,  {"sitemaps": sitemaps},
+         name='django.contrib.sitemaps.views.sitemap'),
     # path("__debug__/", include("debug_toolbar.urls")),
     path('', include('vocab.urls'))
 ]

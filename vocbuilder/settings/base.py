@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'vocab',
     'graphene_django',
+    'django.contrib.sitemaps',
     # 'debug_toolbar',
 ]
 
