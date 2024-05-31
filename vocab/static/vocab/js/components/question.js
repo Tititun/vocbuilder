@@ -31,7 +31,6 @@ export const Question = function({word}) {
         }
     )
     
-
     return (<>
             <div id={`question_${db_data.words[word]['word_id']}`}  key={db_data.words[word]['word_id']} className="card w-md-100 ms-2 shadow">
                 <div className="card-body  d-flex flex-column">
@@ -57,16 +56,12 @@ export const Question = function({word}) {
                                 ref={input_field}
                                 onInput={(e) => {
                                     let value = e.target.value
-                                    if (value.length > ctx.length){
-                                        setInputValue(value.slice(0, ctx.length))
-                                    }
-                                    if (value.length == ctx.length) {
-                                        if (value.toLowerCase() == ctx.toLowerCase()) {
-                                            setInputValue(value)
-                                            setSuccess(true)
-                                        }}
-                                    else{
+                                    console.log(value)
+                                    if ((value.length == ctx.length) && (value.toLowerCase() == ctx.toLowerCase())) {
                                         setInputValue(value)
+                                        setSuccess(true)
+                                    } else {
+                                        setInputValue(value.slice(0, ctx.length))
                                         }
                                     }
                                 }
@@ -77,7 +72,7 @@ export const Question = function({word}) {
                                 size={ctx.length}
                                 id={'quiz_' + db_data.words[word]['word_id']}
                                 value={inputValue}
-                                placeholder={firstLetter + '*'.repeat(ctx.length)}
+                                placeholder={firstLetter + '*'.repeat(ctx.length - firstLetter.length)}
                                 style={{width: `${ctx.length * 12}px`}}
                                 >
                             </input>
