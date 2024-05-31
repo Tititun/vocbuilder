@@ -56,7 +56,6 @@ export const Question = function({word}) {
                                 ref={input_field}
                                 onInput={(e) => {
                                     let value = e.target.value
-                                    console.log(value)
                                     if ((value.length == ctx.length) && (value.toLowerCase() == ctx.toLowerCase())) {
                                         setInputValue(value)
                                         setSuccess(true)
