@@ -111,15 +111,17 @@ def contact(request):
         form = FeedbackForm(request.POST, request.FILES)
         if form.is_valid():
             feedback = form.save()
-            try:
-                requests.get(f"https://api.telegram.org/bot"
-                             f"{os.environ['BOT_TOKEN']}"
-                             f"/sendMessage?"
-                             f"chat_id={os.environ['BOT_CHAT_ID']}&"
-                             f"text={feedback.feedback}",
-                             timeout=10)
-            except:
-                pass
+            text = feedback.feedback
+            if 'SEO' not in text:
+                try:
+                    requests.get(f"https://api.telegram.org/bot"
+                                 f"{os.environ['BOT_TOKEN']}"
+                                 f"/sendMessage?"
+                                 f"chat_id={os.environ['BOT_CHAT_ID']}&"
+                                 f"text={text}",
+                                 timeout=10)
+                except:
+                    pass
             return render(request, 'vocab/feedback_success.html')
     return render(request, 'vocab/contact.html', {'form': form,
                                                   'hide_nav': True})
