@@ -1,5 +1,6 @@
 .gitignore
 .idea
+.vscode
 certbot
 docker-entrypoint*
 media
@@ -12,7 +13,9 @@ __pycache__
 .env*
 .gitignore
 bundle.js
+deploy.sh
 playground.py
 settings.json
+vocab.sql
 vocbuilder/my.cnf
 vocbuilder/my_local.cnf
