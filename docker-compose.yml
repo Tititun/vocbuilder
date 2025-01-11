@@ -10,12 +10,14 @@ services:
     image: mysql
     restart: always
     command: --log_error_verbosity=1  # errors only
-    volumes:
-      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
     ports:
       - "13306:3306"
+    volumes:
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
     env_file:
       - .env_prod
+    pre_stop:
+      - mysqldump -uroot -p$MYSQL_PASSWORD $MYSQL_DATABASE > vocab.sql
   web:
     image: web_app:3.6
     build:
@@ -50,7 +52,6 @@ services:
       - ./certbot/www:/var/www/certbot/:ro
       - ./certbot/conf/:/etc/nginx/ssl/:ro
       - .:/app
-      - ../findjob:/findjob_app
     ports:
       - "80:80"
       - "443:443"
