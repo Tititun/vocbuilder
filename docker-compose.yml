@@ -17,7 +17,7 @@ services:
     env_file:
       - .env_prod
     pre_stop:
-      - mysqldump -uroot -p$MYSQL_PASSWORD $MYSQL_DATABASE > vocab.sql
+      - command: mysqldump -uroot -p$MYSQL_PASSWORD $MYSQL_DATABASE > vocab.sql
   web:
     image: web_app:3.6
     build:
