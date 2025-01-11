@@ -3,16 +3,20 @@ const drag_target = document.querySelector('#dropzone-main');
 
 Dropzone.options.dropzoneMain = {
     paramName: "file",
-    maxFilesize: 200,
+    maxFilesize: 200 * 1024 * 1024 * 1024,
     maxFiles: 1,
     acceptedFiles: '.db',
     addRemoveLinks: true,
-    autoProcessQueue: false,
+    autoProcessQueue: true,
+    paramName: 'db',
     hiddenInputContainer: document.querySelector('#dropzone-main'),
     accept: function(file, done) {
-        document.querySelector('[type="file"]').name = 'db'
-        drag_target.requestSubmit();
+        console.log(file.name);
+        document.querySelector('[type="file"]').setAttribute('name', 'db')
         done();
+   },
+   success: function(file, response) {
+        window.location.href = `?name=${response.name}`
    }
  };
 

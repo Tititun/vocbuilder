@@ -24,7 +24,7 @@ logging.basicConfig(encoding='utf-8', level=logging.INFO)
 
 
 def index(request: HttpRequest):
-    if request.method == 'POST':
+    if request.method == 'POST' or request.GET.get('name'):
         if db := request.FILES.get('db'):
             name = f'{uuid.uuid4().hex}.db'
             file_path = os.path.join(settings.MEDIA_ROOT, name)
@@ -34,9 +34,13 @@ def index(request: HttpRequest):
                 # TODO: add error message
                 os.remove(file_path)
                 return redirect('vocab:index')
+            return JsonResponse({'name': name})
         else:
-            name = 'vocab'
-            file_path = os.path.abspath('vocab/static/vocab/vocab.db')
+            if name:= request.GET.get('name'):
+                file_path = os.path.join(settings.MEDIA_ROOT, name)
+            else:
+                name = 'vocab'
+                file_path = os.path.abspath('vocab/static/vocab/vocab.db')
         s = time.time()
         data = read_db(file_path,
                        num_rows=300 if name == 'vocab' else None,
