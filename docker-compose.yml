@@ -12,10 +12,12 @@ services:
     command: --log_error_verbosity=1  # errors only
     volumes:
       - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    ports:
+      - "13306:3306"
     env_file:
       - .env_prod
   web:
-    image: web_app:3.5
+    image: web_app:3.6
     build:
       dockerfile: Dockerfile
     command: ["./wait-for-it.sh", "db:3306", "--",
@@ -27,14 +29,28 @@ services:
       - DJANGO_SETTINGS_MODULE=vocbuilder.settings.prod
     depends_on:
       - db
+  findjob:
+    image: job_app:1.8
+    build:
+      context: ../findjob
+    command: ["./wait-for-it.sh", "db:3306", "--",
+              "uwsgi", "--ini", "/app/config/uwsgi/uwsgi.ini"]
+    restart: always
+    volumes:
+      - ../findjob:/app
+    environment:
+      - DJANGO_SETTINGS_MODULE=findjob.settings
+    depends_on:
+      - db
   nginx:
-    image: nginx
+    image: nginx_local
     restart: always
     volumes:
       - ./config/nginx:/etc/nginx/templates
       - ./certbot/www:/var/www/certbot/:ro
       - ./certbot/conf/:/etc/nginx/ssl/:ro
       - .:/app
+      - ../findjob:/findjob_app
     ports:
       - "80:80"
       - "443:443"

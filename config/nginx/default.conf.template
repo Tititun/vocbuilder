@@ -3,6 +3,10 @@ upstream uwsgi_app {
     server unix:/app/vocbuilder/sockets/uwsgi_app.sock;
 }
 
+upstream findjob_app {
+    server unix:/findjob_app/findjob/sockets/uwsgi_app.sock;
+}
+
 
 
 server {
@@ -25,7 +29,28 @@ server {
 }
 
 server {
-    listen 443 default_server ssl http2;
+    listen       80;
+    listen [::]:80;
+
+    server_name  www.job-for-danil.tech job-for-danil.tech;
+    client_max_body_size 100M;
+    error_log    stderr warn;
+    access_log   /dev/stdout main;
+    server_tokens off;
+    
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        return 301 https://job-for-danil.tech$request_uri;
+    }
+    
+}
+
+
+server {
+    listen 443 ssl http2;
     listen [::]:443 ssl http2;
     server_name  www.vocab-cards.online vocab-cards.online;
     client_max_body_size 100M;
@@ -46,3 +71,29 @@ server {
        alias /app/media/;
     }
 }
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name  www.job-for-danil.tech job-for-danil.tech;
+    client_max_body_size 100M;
+
+    ssl_certificate /etc/nginx/ssl/live/job-for-danil.tech/fullchain.pem;
+    ssl_certificate_key /etc/nginx/ssl/live/job-for-danil.tech/privkey.pem;
+
+    location / {
+       include      /etc/nginx/uwsgi_params;
+        uwsgi_pass   findjob_app;
+        client_max_body_size 20M;
+    }
+
+    location /static/ {
+        alias /findjob_app/static/;
+        client_max_body_size 20M;
+    }
+    location /media/ {
+       alias /findjob_app/media/;
+    }
+
+}
+
