@@ -16,8 +16,8 @@ services:
       - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
     env_file:
       - .env_prod
-    pre_stop:
-      - command: mysqldump -uroot -p$MYSQL_PASSWORD $MYSQL_DATABASE > vocab.sql
+#    pre_stop:
+#      - command: mysqldump -uroot -p$$MYSQL_PASSWORD $$MYSQL_DATABASE > vocab.sql
   web:
     image: web_app:3.6
     build:
@@ -32,14 +32,14 @@ services:
     depends_on:
       - db
   findjob:
-    image: job_app:1.8
+    image: job_app:2.0
     build:
       context: ../findjob
     command: ["./wait-for-it.sh", "db:3306", "--",
-              "uwsgi", "--ini", "/app/config/uwsgi/uwsgi.ini"]
+              "uwsgi", "--ini", "/findjob_app/config/uwsgi/uwsgi.ini"]
     restart: always
     volumes:
-      - ../findjob:/app
+      - ../findjob:/findjob_app
     environment:
       - DJANGO_SETTINGS_MODULE=findjob.settings
     depends_on:
@@ -52,6 +52,7 @@ services:
       - ./certbot/www:/var/www/certbot/:ro
       - ./certbot/conf/:/etc/nginx/ssl/:ro
       - .:/app
+      - ../findjob:/findjob_app
     ports:
       - "80:80"
       - "443:443"
